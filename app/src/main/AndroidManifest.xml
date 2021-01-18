@@ -9,10 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TermProjectUser">
-        <activity android:name=".MainActivity"
+        <activity android:name=".QueueActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"
-            >
+            ></activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
