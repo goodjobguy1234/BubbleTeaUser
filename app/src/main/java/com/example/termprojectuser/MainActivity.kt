@@ -3,9 +3,11 @@ package com.example.termprojectuser
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.View
-import android.view.WindowInsets
 import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var confirm_btn:Button
     private lateinit var queue_btn:Button
     private lateinit var redeem_btn:Button
+    private lateinit var total_txt:TextView
     private lateinit var order_recycleView:RecyclerView
     private lateinit var order:ArrayList<Order>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         init()
         createMenu()
         order = ArrayList()
-        createOrder()
+        total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this,2)
         val orderLayout = LinearLayoutManager(this)
         menu_recycleView.apply {
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
                 if(order.any { it.item.name == item.name }){
                     order.forEach {
                         if (it.item.name == item.name){
-                            it.quantity++
+                            it.addQuantity()
                             position = order.indexOf(it)
                         }
                     }
@@ -44,6 +47,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 order_recycleView.adapter?.notifyDataSetChanged()
                 order_recycleView.scrollToPosition(position)
+                addMenu(item)
+                total_txt.text = "Total    ${calculateTotal()}"
             }
         }
 
@@ -51,10 +56,17 @@ class MainActivity : AppCompatActivity() {
             layoutManager = orderLayout
             adapter = OrderAdapter(order){position,type ->
                 when(type){
-                    1 -> order.removeAt(position)
-                    2 -> order[position].quantity ++
+                    1 ->{
+                        cancelMenu(order[position].item, order[position].quantity)
+                        order.removeAt(position)
+                    }
+                    2 -> {
+                        order[position].addQuantity()
+                        addMenu(order[position].item)
+                    }
                     3 -> {
-                        order[position].quantity--
+                        subtractMenu(order[position].item)
+                        order[position].subtractQuantity()
                         if (order[position].quantity == 0){
                             order.removeAt(position)
                         }
@@ -62,37 +74,30 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 order_recycleView.adapter?.notifyDataSetChanged()
+                total_txt.text = "Total    ${calculateTotal()}"
             }
         }
     }
 
     fun createMenu(){
         menu = ArrayList()
-        menu.add(Menu(1234, "item1", 35))
-        menu.add(Menu(1234, "item2", 35))
-        menu.add(Menu(1234, "item3", 35))
-        menu.add(Menu(1234, "item4", 35))
-        menu.add(Menu(1234, "item5", 35))
+        menu.add(Menu(1234, "item1", 35,10))
+        menu.add(Menu(1234, "item2", 35,10))
+        menu.add(Menu(1234, "item3", 35,10))
+        menu.add(Menu(1234, "item4", 35,10))
+        menu.add(Menu(1234, "item5", 35,10))
 
     }
+
     fun init(){
         menu_recycleView = findViewById<RecyclerView>(R.id.menu_recycleview)
         order_recycleView = findViewById<RecyclerView>(R.id.order_recycleview)
         confirm_btn = findViewById(R.id.confirm_btn)
         queue_btn = findViewById(R.id.queue_btn)
         redeem_btn = findViewById(R.id.redeem_btn)
+        total_txt = findViewById(R.id.total_txt)
     }
-    fun createOrder(){
 
-        var item = Menu(1234, "item1", 35)
-        order.add(Order(item, 1))
-        item = Menu(1234, "item2", 35)
-        order.add(Order(item, 1))
-        item = Menu(1234, "item3", 35)
-        order.add(Order(item, 1))
-        item = Menu(1234, "item4", 35)
-        order.add(Order(item, 1))
-    }
     override fun onStart() {
         super.onStart()
         window.decorView.apply {
@@ -104,6 +109,48 @@ class MainActivity : AppCompatActivity() {
     fun onQueueBtnClickListerner(view: View){
         val intent = Intent(this, QueueActivity::class.java)
         startActivity(intent)
+    }
+
+    fun addMenu(item:Menu){
+        val position = menu.indexOf(item)
+        menu[position].subtractRemain()
+    }
+
+    fun cancelMenu(item: Menu, amount:Int){
+        val position = menu.indexOf(item)
+        menu[position].addRemainAmount(amount)
+    }
+    fun subtractMenu(item:Menu){
+        val position = menu.indexOf(item)
+        menu[position].addRemain()
+    }
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putParcelableArrayList("orderlist", order)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val list = savedInstanceState.getParcelableArrayList<Order>("orderlist")
+        if (list != null){
+            order = list
+        }
+    }
+
+    fun onConfirmCLick(view:View){
+        if (order.isEmpty()){
+            Toast.makeText(this, "Please order something", Toast.LENGTH_LONG).show()
+        }else{
+            
+        }
+    }
+
+    fun calculateTotal():Int{
+        var total = 0
+        order.forEach {
+            total += (it.quantity * it.item.price)
+        }
+        return  total
     }
 
 }
