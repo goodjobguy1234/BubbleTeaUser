@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/input_edt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="30dp"
+        android:background="@drawable/edittext_border"
+        android:gravity="center"
+        android:hint="input your phone id"
+        android:inputType="numberPassword"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

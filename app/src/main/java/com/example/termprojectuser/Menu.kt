@@ -9,7 +9,18 @@ data class Menu(
         val price: Int,
         var remainder: Int
         ){
+        companion object{
+                fun createMenu():ArrayList<Menu>{
+                        var menu = ArrayList<Menu>()
+                        menu.add(Menu(1234, "item1", 35,10))
+                        menu.add(Menu(1234, "item2", 35,10))
+                        menu.add(Menu(1234, "item3", 35,10))
+                        menu.add(Menu(1234, "item4", 35,10))
+                        menu.add(Menu(1234, "item5", 35,10))
+                        return menu
 
+                }
+        }
         fun subtractRemain(){
                 remainder--
         }

@@ -8,8 +8,12 @@ import kotlinx.parcelize.TypeParceler
 @Parcelize
 data class Order(
         @TypeParceler<Menu, MenuClassParceler>() val item: Menu,
-        var quantity: Int
+        var quantity: Int,
+        var reward: Boolean
 ) : Parcelable{
         fun addQuantity() = quantity++
         fun subtractQuantity() = quantity--
+        override fun equals(other: Any?): Boolean {
+                return (other is Order) && item.name == other.item.name
+        }
 }

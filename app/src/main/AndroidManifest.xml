@@ -9,13 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TermProjectUser">
-        <activity android:name=".QueueActivity"
-            android:screenOrientation="landscape"
+        <activity android:name=".RewardActivity"
             android:configChanges="orientation|screenSize"
-            ></activity>
+            android:screenOrientation="landscape"
+            >
+        </activity>
+        <activity
+            android:name=".QueueActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustNothing"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

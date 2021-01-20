@@ -115,7 +115,7 @@
             android:singleLine="true"
             android:textSize="15dp"
             android:text="Confirm Order"
-            android:onClick="onConfirmCLick"
+            android:onClick="onConfirmBtnClick"
              />
 
         <Button
@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/button"
             android:singleLine="true"
-            android:onClick="onQueueBtnClickListerner"
+            android:onClick="onQueueBtnClick"
             android:textSize="15dp"
             android:text="View Queue"
            />
@@ -137,6 +137,7 @@
             android:singleLine="true"
             android:textSize="15dp"
             android:text="Redeem reward"
+            android:onClick="onRedeemRewardBtnClick"
             android:layout_marginBottom="50dp"
 
             />
