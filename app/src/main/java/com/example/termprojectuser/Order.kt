@@ -14,6 +14,6 @@ data class Order(
         fun addQuantity() = quantity++
         fun subtractQuantity() = quantity--
         override fun equals(other: Any?): Boolean {
-                return (other is Order) && item.name == other.item.name
+                return (other is Order) && (item.name == other.item.name)
         }
 }

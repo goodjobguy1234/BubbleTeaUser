@@ -170,7 +170,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun calculateTotal(): Int {
-        // rework again
         var total = 0
         order.forEach {
             total += (it.quantity * it.item.price)
