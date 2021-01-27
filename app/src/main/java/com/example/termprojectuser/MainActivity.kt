@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var queue_btn: Button
     private lateinit var redeem_btn: Button
     private lateinit var total_txt: TextView
+    lateinit var sectionList: ArrayList<RecyclerItem>
     lateinit var userList: ArrayList<User>
     private lateinit var order_recycleView: RecyclerView
     private lateinit var order: ArrayList<Order>
@@ -32,8 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
-        createMenu()
         order = ArrayList()
+        menu = Menu.createMenu()
+        sectionList = ArrayList()
         userList = User.createUser()
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
@@ -42,9 +44,9 @@ class MainActivity : AppCompatActivity() {
             layoutManager = menuLayout
             adapter = MenuAdapter(menu) { item ->
                 var position = order.size
-                if (checkDuplicate(item)) {
+                if (checkDuplicate(Order(item, 1, false))) {
                     order.forEach {
-                        if (it.item.name == item.name) {
+                        if (it.item.name == item.name && !it.reward) {
                             it.addQuantity()
                             position = order.indexOf(it)
                         }
@@ -52,6 +54,8 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     order.add(Order(item, 1, false))
                 }
+                sectionList.clear()
+                sectionList.addAll(transformList(order))
                 order_recycleView.adapter?.notifyDataSetChanged()
                 order_recycleView.scrollToPosition(position)
                 addMenu(item)
@@ -61,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         order_recycleView.apply {
             layoutManager = orderLayout
-            adapter = OrderAdapter(order) { position, type ->
+            adapter = OrderAdapter(sectionList) { position, type ->
                 when (type) {
                     1 -> {
                         cancelMenu(order[position].item, order[position].quantity)
@@ -80,21 +84,14 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 }
+                sectionList.clear()
+                sectionList.addAll(transformList(order))
                 order_recycleView.adapter?.notifyDataSetChanged()
                 total_txt.text = "Total    ${calculateTotal()}"
             }
         }
     }
 
-    fun createMenu() {
-        menu = ArrayList()
-        menu.add(Menu(1234, "item1", 35, 10))
-        menu.add(Menu(1234, "item2", 35, 10))
-        menu.add(Menu(1234, "item3", 35, 10))
-        menu.add(Menu(1234, "item4", 35, 10))
-        menu.add(Menu(1234, "item5", 35, 10))
-
-    }
 
     fun init() {
         menu_recycleView = findViewById<RecyclerView>(R.id.menu_recycleview)
@@ -155,6 +152,7 @@ class MainActivity : AppCompatActivity() {
                 it.dismiss()
                 showDialog()
                 order.clear()
+                sectionList.clear()
                 total_txt.text = "Total     0"
                 order_recycleView.adapter!!.notifyDataSetChanged()
 
@@ -162,6 +160,7 @@ class MainActivity : AppCompatActivity() {
                 it.dismiss()
                 showDialog()
                 order.clear()
+                sectionList.clear()
                 total_txt.text = "Total     0"
                 order_recycleView.adapter!!.notifyDataSetChanged()
             })
@@ -172,7 +171,9 @@ class MainActivity : AppCompatActivity() {
     fun calculateTotal(): Int {
         var total = 0
         order.forEach {
-            total += (it.quantity * it.item.price)
+            if(!it.reward){
+                total += (it.quantity * it.item.price)
+            }
         }
         return total
     }
@@ -184,6 +185,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, RewardActivity::class.java)
             val position = userList.indexOf(User(phoneId, 0))
             intent.putExtra("user", userList[position])
+            intent.putExtra("menulist", menu)
             startActivityForResult(intent, REQUEST_CODE)
 
         },{
@@ -197,16 +199,21 @@ class MainActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
             if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
                 val arrayitem = data!!.getParcelableArrayListExtra<Order>("item")
+                val return_user = data.getParcelableExtra<User>("return_user")!!
                 Log.d("returnOrder", arrayitem.toString())
                 arrayitem!!.forEach { reward ->
-                    if (checkDuplicate(reward.item)) {
+                    if (checkDuplicate(reward)) {
                         val position = order.indexOf(reward)
                         order[position].addQuantity()
                     } else {
                         order.add(reward)
                     }
+                    addMenu(reward.item)
                 }
+                sectionList.clear()
+                sectionList.addAll(transformList(order))
                 order_recycleView.adapter!!.notifyDataSetChanged()
+                userList[userList.indexOf(return_user)].update(return_user)
             }
         } catch (ex: Exception) {
             Toast.makeText(this, ex.toString(),
@@ -215,8 +222,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun checkDuplicate(item: Menu): Boolean {
-        return order.any { it.item.name == item.name }
+    fun checkDuplicate(item: Order): Boolean {
+//        order.any { it.item.name == item.name }
+        return order.contains(item)
     }
 
     fun createEditDialog(message: String): AlertDialog {
@@ -229,7 +237,6 @@ class MainActivity : AppCompatActivity() {
             }
             setNegativeButton("Cancel") { _, _ ->
             }
-
         }.create()
         return dialog
     }
@@ -282,6 +289,31 @@ class MainActivity : AppCompatActivity() {
 
     fun isUserExist(item:String):Boolean{
         return userList.any { it.phoneId == item}
+    }
+
+    fun transformList(orderList: ArrayList<Order>):ArrayList<RecyclerItem>{
+        val groupList = orderList.groupBy {
+            it.reward
+        }
+        val myOrderList = ArrayList<RecyclerItem>()
+        val myRedeemList = ArrayList<RecyclerItem>()
+        for (i in groupList.keys){
+            if (i){
+                myRedeemList.add(RecyclerItem.Header("Reward Order"))
+                for (v in groupList.getValue(i)){
+                    myRedeemList.add(RecyclerItem.Product(v))
+                }
+            }else{
+                myOrderList.add(RecyclerItem.Header("Order"))
+                for (v in groupList.getValue(i)){
+                    myOrderList.add(RecyclerItem.Product(v))
+                }
+            }
+        }
+        myOrderList.addAll(myRedeemList)
+
+
+        return myOrderList
     }
 }
 

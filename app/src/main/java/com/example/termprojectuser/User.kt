@@ -28,6 +28,9 @@ data class User(
     fun addPoint(amount: Int){
         point += amount
     }
+    fun update(user: User){
+        point = user.point
+    }
     override fun equals(other: Any?): Boolean {
         return (other is User) && (phoneId == other.phoneId)
     }

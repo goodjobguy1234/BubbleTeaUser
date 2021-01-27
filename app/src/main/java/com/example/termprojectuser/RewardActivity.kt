@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ class RewardActivity : AppCompatActivity() {
     lateinit var rewardMenu: ArrayList<RewardMenu>
     lateinit var rewardOrder: ArrayList<Order>
     lateinit var user: User
+    lateinit var menu:ArrayList<Menu>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reward)
@@ -24,13 +26,18 @@ class RewardActivity : AppCompatActivity() {
         init()
         rewardOrder = ArrayList()
         user = intent.getParcelableExtra<User>("user")!!
+        menu = intent.getParcelableArrayListExtra<Menu>("menulist")!!
         rewardMenu = RewardMenu.createMenu()
         phone_txt.text = user.phoneId
         point_txt.text = user.point.toString()
         reward_adapter.apply {
             layoutManager = GridLayoutManager(this@RewardActivity, 2)
             adapter = RewardAdapter(rewardMenu){ item, position ->
-                showDialog(item)
+                if(checkRemain(item.menu)){
+                    showDialog(item)
+                }else{
+                    Toast.makeText(this@RewardActivity, "This menu is unavaliable", Toast.LENGTH_LONG).show()
+                }
 
             }
         }
@@ -46,7 +53,11 @@ class RewardActivity : AppCompatActivity() {
     }
 
     fun onClickBack(view: View) {
-        val intent = intent.putExtra("item", rewardOrder)
+
+        val intent = intent.apply {
+            putExtra("item", rewardOrder)
+            putExtra("return_user", user)
+        }
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -77,6 +88,7 @@ class RewardActivity : AppCompatActivity() {
                         dialog.dismiss()
                         showDialog()
                         addRewardOrder(item)
+
                     }else{
                         dialog.dismiss()
                         val seconddialog = AlertDialog.Builder(this@RewardActivity).apply {
@@ -90,12 +102,13 @@ class RewardActivity : AppCompatActivity() {
                         }
                         seconddialog.show()
                     }
+
+                    }
                 }
             }
-
+            dialog.show()
         }
-        dialog.show()
-    }
+
 
     fun showDialog(){
         val dialog = AlertDialog.Builder(this).apply{
@@ -123,5 +136,8 @@ class RewardActivity : AppCompatActivity() {
         rewardOrder.add(Order(item.menu, 1, true))
     }
 
-
+    fun checkRemain(itemMenu: Menu):Boolean{
+        val position = menu.indexOf(itemMenu)
+        return (menu[position].remainder > 0)
+    }
 }

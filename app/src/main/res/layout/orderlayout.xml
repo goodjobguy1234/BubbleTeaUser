@@ -26,23 +26,26 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/cancel_icon"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    app:srcCompat="@drawable/ic_cancel"
-                    android:layout_gravity="right"
-                    />
+            <ImageView
+                android:id="@+id/cancel_icon"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                app:srcCompat="@drawable/ic_cancel" />
 
             <TextView
                 android:id="@+id/txt_ordername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
                 android:paddingBottom="15dp"
                 android:text="name"
+                android:maxWidth="100dp"
+                android:maxLines="3"
+                android:minLines="2"
                 android:textColor="@color/orange"
-                android:textSize="10dp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -52,33 +55,51 @@
 
                 <TextView
                     android:id="@+id/txt_orderprice"
-                    android:paddingLeft="15dp"
+                    android:paddingStart="15dp"
                     android:textStyle="bold"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="price"
-                    android:textSize="10dp"
-                    android:textColor="@color/orange" />
-
-                <ImageView
-                    android:id="@+id/minus_imageview"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    app:srcCompat="@drawable/ic_minus" />
-
-                <TextView
-                    android:id="@+id/txt_quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="price"
+                    android:textSize="14sp"
+                    android:textColor="@color/orange" />
+                <TextView
+                    android:id="@+id/nmtxt"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:paddingHorizontal="10dp"
-                    android:text="0" />
+                    android:textSize="14sp"
+                    android:textColor="@color/orange"
+                    android:text="Baht" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    >
+                    <ImageView
+                        android:id="@+id/minus_imageview"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@drawable/ic_minusorder" />
 
-                <ImageView
-                    android:id="@+id/add_imageview"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    app:srcCompat="@drawable/ic_add" />
+                    <TextView
+                        android:id="@+id/txt_quantity"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+
+                    <ImageView
+                        android:id="@+id/add_imageview"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:srcCompat="@drawable/ic_plusorder" />
+
+                </LinearLayout>
+
 
 
             </LinearLayout>

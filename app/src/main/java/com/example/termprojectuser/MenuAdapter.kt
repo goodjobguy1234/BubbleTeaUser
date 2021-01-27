@@ -6,26 +6,24 @@ import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 
 
 class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
     private lateinit var mcontext:Context
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        val itemimage = itemView.findViewById<ImageView>(R.id.imageView)
+        val image = itemView.findViewById<ImageView>(R.id.menuImage)
         val itemname = itemView.findViewById<TextView>(R.id.txt_name)
         val itemprice = itemView.findViewById<TextView>(R.id.txt_price)
-        val add_btn = itemView.findViewById<Button>(R.id.imageButton_add)
+        val add_btn = itemView.findViewById<ImageButton>(R.id.imageButton_add)
 
         fun bind(position: Int){
             itemname.text = menu[position].name
             itemprice.text = menu[position].price.toString()
+            image.setImageResource(menu[position].imageId)
             if (!menu[position].checkRemain()){
-                unavaliable(itemimage)
+                unavaliable(image)
             }
         }
     }

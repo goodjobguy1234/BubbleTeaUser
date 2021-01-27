@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+    android:background="@color/secondary"
     tools:context=".MainActivity"
     android:fitsSystemWindows="true"
     android:orientation="horizontal"
     >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -28,8 +28,8 @@
             android:layout_marginTop="48dp"
             android:text="TeaBub"
             android:textColor="@color/orange"
-            android:textSize="50dp"
-            android:textStyle="bold"
+            android:textSize="72sp"
+            android:textStyle="italic"
             />
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,9 +41,10 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="150dp"
+                android:layout_marginStart="150dp"
                 android:text="CurrentQueue"
-                android:textSize="24dp"
+                android:textColor="@color/button"
+                android:textSize="48sp"
                 android:textStyle="bold"
                 />
 
@@ -52,8 +53,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
+                android:textColor="@color/button"
                 android:text="A105"
-                android:textSize="24dp"
+                android:textSize="48sp"
                 android:textStyle="bold"
                 />
 
@@ -64,7 +66,7 @@
             android:id="@+id/menu_recycleview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="7dp"
             >
 
         </androidx.recyclerview.widget.RecyclerView>
@@ -74,7 +76,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:padding="30dp"
-        android:layout_width="400dp"
+        android:layout_width="391dp"
         android:layout_height="match_parent"
         android:background="@color/orange"
         android:orientation="vertical"
@@ -87,8 +89,9 @@
             android:layout_height="wrap_content"
            android:paddingBottom="15dp"
             android:text="Order Summary"
-            android:textSize="30dp"
-            android:textStyle="bold" />
+            android:textColor="@color/button"
+            android:textSize="24sp"
+            android:textStyle="italic|bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/order_recycleview"
@@ -102,9 +105,10 @@
             android:id="@+id/total_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="15dp"
+            android:paddingVertical="15dp"
             android:text="Total"
-            android:textSize="15dp"
+            android:textColor="@color/black"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <Button
@@ -113,7 +117,10 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#3D405B"
             android:singleLine="true"
-            android:textSize="15dp"
+            android:stateListAnimator="@null"
+            android:textSize="24sp"
+            android:textColor="@color/secondary"
+            android:textAllCaps="false"
             android:text="Confirm Order"
             android:onClick="onConfirmBtnClick"
              />
@@ -124,9 +131,12 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/button"
             android:singleLine="true"
+            android:textAllCaps="false"
             android:onClick="onQueueBtnClick"
-            android:textSize="15dp"
+            android:textSize="24sp"
+            android:textColor="@color/secondary"
             android:text="View Queue"
+            android:stateListAnimator="@null"
            />
 
         <Button
@@ -134,8 +144,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#3D405B"
+            android:stateListAnimator="@null"
             android:singleLine="true"
-            android:textSize="15dp"
+            android:textColor="@color/secondary"
+            android:textAllCaps="false"
+            android:textSize="24sp"
             android:text="Redeem reward"
             android:onClick="onRedeemRewardBtnClick"
             android:layout_marginBottom="50dp"
