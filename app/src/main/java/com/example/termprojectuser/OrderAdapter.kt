@@ -80,14 +80,14 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -
                 (holder as OrderViewHolder).apply {
                     bind(position)
                     cancel_icon.setOnClickListener {
-                        callback(position-1, 1)
+                        callback(position, 1)
                     }
                     minus_icon.setOnClickListener {
-                        callback(position-1, 3)
+                        callback(position, 3)
                     }
                     add_icon.setOnClickListener {
                         if ((order[position] as RecyclerItem.Product).order.item.checkRemain()){
-                            callback(position-1, 2)
+                            callback(position, 2)
                         }else{
                             Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
                         }
