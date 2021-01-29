@@ -16,7 +16,7 @@ class QueueAdapter(val queue:ArrayList<Queue>): RecyclerView.Adapter<QueueAdapte
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.queue_layout_recycle, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.queue_layout_recycle, parent, false) // TODO this one is redundant in every Adapter, should you create extension for this class?
         return ViewHolder(view)
     }
 

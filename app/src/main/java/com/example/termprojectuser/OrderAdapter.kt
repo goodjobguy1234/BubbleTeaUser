@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 const val TYPE_ORDER = 1
 const val TYPE_REDEEM = 2
 const val TYPE_HEADER = 0
-class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -> Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -> Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>() { // TODO should seperate holder into different file. It is too many thing in one file
     private lateinit var mcontext: Context
     inner class OrderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.orderimageview)
@@ -53,15 +53,15 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -
         val holder: RecyclerView.ViewHolder? =
         when(viewType){
             TYPE_ORDER -> {
-                val view = LayoutInflater.from(mcontext).inflate(R.layout.orderlayout, parent, false)
+                val view = LayoutInflater.from(mcontext).inflate(R.layout.orderlayout, parent, false) // TODO this one is redundant in every Adapter, should you create extension for this class?
                  OrderViewHolder(view)
             }
             TYPE_REDEEM -> {
-                val view = LayoutInflater.from(mcontext).inflate(R.layout.reward_order_layout, parent, false)
+                val view = LayoutInflater.from(mcontext).inflate(R.layout.reward_order_layout, parent, false) // TODO this one is redundant in every Adapter, should you create extension for this class?
                 RedeemViewHolder(view)
             }
             TYPE_HEADER -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.header_layout, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.header_layout, parent, false) // TODO this one is redundant in every Adapter, should you create extension for this class?
                 HeaderHolder(view)
             }
 

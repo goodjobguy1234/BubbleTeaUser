@@ -9,6 +9,7 @@ data class User(
         var point: Int
 ):Parcelable{
     fun checkPoint(item: RewardMenu): Boolean{
+        // TODO Why not -> ```return item.point <= point?```
         if (item.point > point){
             return false
         }

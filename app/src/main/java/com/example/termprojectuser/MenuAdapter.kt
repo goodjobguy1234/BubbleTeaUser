@@ -30,7 +30,7 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         mcontext = parent.context
-        val view = LayoutInflater.from(mcontext).inflate(R.layout.menulayout, parent, false)
+        val view = LayoutInflater.from(mcontext).inflate(R.layout.menulayout, parent, false) // TODO this one is redundant in every Adapter, should you create extension for this class?
         return ViewHolder(view)
     }
 

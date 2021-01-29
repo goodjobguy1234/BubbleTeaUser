@@ -35,9 +35,9 @@ class MainActivity : AppCompatActivity() {
         init()
         order = ArrayList()
         menu = Menu.createMenu()
-        sectionList = ArrayList()
+        sectionList = ArrayList() // do not create main list or private variable in on Create functiion like this -> use lazy search for `android by lazy`
         userList = User.createUser()
-        total_txt.text = "Total    0"
+        total_txt.text = "Total    0" // TODO should be in init view function
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
         menu_recycleView.apply {
@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
                 total_txt.text = "Total    ${calculateTotal()}"
             }
         }
+
+        // TODO put everything here to initView function + use mvvm. It is useful for this case
     }
 
 

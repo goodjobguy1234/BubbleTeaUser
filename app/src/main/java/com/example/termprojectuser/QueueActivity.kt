@@ -35,7 +35,7 @@ class QueueActivity : AppCompatActivity() {
         }
     }
     override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
+        super.onWinodowFocusChanged(hasFocus)
         setUpLayout()
     }
 
@@ -44,7 +44,7 @@ class QueueActivity : AppCompatActivity() {
         back_btn = findViewById(R.id.back_btn)
     }
 
-    fun onClickBack(view:View){
+    fun onClickBack(view:View){ // TODO do not bind the click back button like this
         finish()
     }
 }

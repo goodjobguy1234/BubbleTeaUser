@@ -17,6 +17,8 @@ data class Queue(
             order = Order(menu, 1, false)
             list.add(Queue(order, "A103"))
             return list
+
+            // use .apply ?
         }
     }
 
