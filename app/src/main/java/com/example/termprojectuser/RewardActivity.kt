@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class RewardActivity : AppCompatActivity() {
+class RewardActivity : BaseActivity() {
     lateinit var phone_txt: TextView
     lateinit var point_txt: TextView
     lateinit var reward_adapter: RecyclerView
@@ -20,7 +20,6 @@ class RewardActivity : AppCompatActivity() {
     lateinit var menu:ArrayList<Menu>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reward)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         init()
@@ -44,19 +43,8 @@ class RewardActivity : AppCompatActivity() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        setUpLayout()
-    }
-    fun setUpLayout(){
-        window.decorView.apply {
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        }
-    }
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        setUpLayout()
+    override fun getLayoutResourceId(): Int {
+        return R.layout.activity_reward
     }
 
     fun onClickBack(view: View) {
@@ -75,17 +63,7 @@ class RewardActivity : AppCompatActivity() {
     }
 
     fun showDialog(item:RewardMenu){
-
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle("Do you want to buy ${item.menu.name}?")
-            setPositiveButton("Confirm"){_,_ ->
-
-            }
-            setNegativeButton("Cancel"){_,_ ->
-
-            }
-        }.create()
-
+        val dialog = createNormalDialog("Do you want to buy ${item.menu.name}?")
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
                 setOnClickListener {
@@ -93,21 +71,14 @@ class RewardActivity : AppCompatActivity() {
                         user.subtractPoint(item.point)
                         point_txt.text = user.point.toString()
                         dialog.dismiss()
-                        showDialog()
+                        showConfirmDialog("Order Confirmed")
                         addRewardOrder(item)
+                        val position = menu.indexOf(item.menu)
+                        menu[position].subtractRemain()
 
                     }else{
                         dialog.dismiss()
-                        val seconddialog = AlertDialog.Builder(this@RewardActivity).apply {
-                            setTitle("Not enough Point")
-                            setPositiveButton("Confirm"){_,_ ->
-                            }
-
-                        }.create()
-                        seconddialog.setOnShowListener {
-                            seconddialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#81B29A"))
-                        }
-                        seconddialog.show()
+                        showConfirmDialog("Not enough Point")
                     }
 
                     }
@@ -116,28 +87,7 @@ class RewardActivity : AppCompatActivity() {
             dialog.show()
         }
 
-
-    fun showDialog(){
-        val dialog = AlertDialog.Builder(this).apply{
-            setTitle("Order Confirmed")
-            setCancelable(false)
-            setPositiveButton("Confirm"){_,_ ->
-
-            }
-        }.create()
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
-                setTextColor(Color.parseColor("#81B29A"))
-                setOnClickListener {
-                    dialog.dismiss()
-
-                }
-            }
-
-        }
-        dialog.show()
-
-    }
+    
 
     fun addRewardOrder(item:RewardMenu){
         rewardOrder.add(Order(item.menu, 1, true))

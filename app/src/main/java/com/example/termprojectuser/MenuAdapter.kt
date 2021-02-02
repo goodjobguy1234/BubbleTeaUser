@@ -3,6 +3,8 @@ package com.example.termprojectuser
 import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +23,11 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
         fun bind(position: Int){
             itemname.text = menu[position].name
             itemprice.text = menu[position].price.toString()
-            image.setImageResource(menu[position].imageId)
-            if (!menu[position].checkRemain()){
+            if (menu[position].remainder == 2){
+                image.setImageResource(menu[position].imageId)
                 unavaliable(image)
+            }else{
+                image.setImageResource(menu[position].imageId)
             }
         }
     }
@@ -39,6 +43,7 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
             bind(position)
             add_btn.setOnClickListener {
                 if (menu[position].checkRemain()){
+                    Log.d("amount", menu[position].remainder.toString())
                     callback(menu[position])
                 }else{
                     Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
@@ -52,8 +57,20 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
     }
 
     fun unavaliable(imageview:ImageView){
-        val matrix = ColorMatrix()
-        matrix.setSaturation(0f)
-        imageview.colorFilter = ColorMatrixColorFilter(matrix)
+//        val matrix = ColorMatrix()
+//        matrix.setSaturation(0f)
+//        imageview.colorFilter = ColorMatrixColorFilter(matrix)
+        val cm = ColorMatrix()
+        val paint = Paint()
+        cm.set(
+                floatArrayOf(
+                        0.33f, 0.33f, 0.33f, 0f, 0f,
+                        0.33f, 0.33f, 0.33f, 0f, 0f,
+                        0.33f, 0.33f, 0.33f, 0f, 0f,
+                        0f, 0f, 0f, 1f, 0f
+                )
+        )
+        imageview.colorFilter = ColorMatrixColorFilter(cm)
+        
     }
 }
