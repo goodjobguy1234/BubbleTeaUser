@@ -5,48 +5,54 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class RewardActivity : AppCompatActivity() {
+class RewardActivity : BaseActivity() {
     lateinit var phone_txt: TextView
     lateinit var point_txt: TextView
     lateinit var reward_adapter: RecyclerView
     lateinit var rewardMenu: ArrayList<RewardMenu>
     lateinit var rewardOrder: ArrayList<Order>
     lateinit var user: User
+    lateinit var menu:ArrayList<Menu>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reward)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         init()
         rewardOrder = ArrayList()
         user = intent.getParcelableExtra<User>("user")!!
+        menu = intent.getParcelableArrayListExtra<Menu>("menulist")!!
         rewardMenu = RewardMenu.createMenu()
         phone_txt.text = user.phoneId
         point_txt.text = user.point.toString()
         reward_adapter.apply {
             layoutManager = GridLayoutManager(this@RewardActivity, 2)
             adapter = RewardAdapter(rewardMenu){ item, position ->
-                showDialog(item)
+                if(checkRemain(item.menu)){
+                    showDialog(item)
+                }else{
+                    Toast.makeText(this@RewardActivity, "This menu is unavaliable", Toast.LENGTH_LONG).show()
+                }
 
             }
         }
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        window.decorView.apply {
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        }
+    override fun getLayoutResourceId(): Int {
+        return R.layout.activity_reward
     }
 
     fun onClickBack(view: View) {
-        val intent = intent.putExtra("item", rewardOrder)
+
+        val intent = intent.apply {
+            putExtra("item", rewardOrder)
+            putExtra("return_user", user)
+        }
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -57,17 +63,7 @@ class RewardActivity : AppCompatActivity() {
     }
 
     fun showDialog(item:RewardMenu){
-
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle("Do you want to buy ${item.menu.name}?")
-            setPositiveButton("Confirm"){_,_ ->
-
-            }
-            setNegativeButton("Cancel"){_,_ ->
-
-            }
-        }.create()
-
+        val dialog = createNormalDialog("Do you want to buy ${item.menu.name}?")
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
                 setOnClickListener {
@@ -75,53 +71,30 @@ class RewardActivity : AppCompatActivity() {
                         user.subtractPoint(item.point)
                         point_txt.text = user.point.toString()
                         dialog.dismiss()
-                        showDialog()
+                        showConfirmDialog("Order Confirmed")
                         addRewardOrder(item)
+                        val position = menu.indexOf(item.menu)
+                        menu[position].subtractRemain()
+
                     }else{
                         dialog.dismiss()
-                        val seconddialog = AlertDialog.Builder(this@RewardActivity).apply {
-                            setTitle("Not enough Point")
-                            setPositiveButton("Confirm"){_,_ ->
-                            }
+                        showConfirmDialog("Not enough Point")
+                    }
 
-                        }.create()
-                        seconddialog.setOnShowListener {
-                            seconddialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#81B29A"))
-                        }
-                        seconddialog.show()
                     }
                 }
             }
-
+            dialog.show()
         }
-        dialog.show()
-    }
 
-    fun showDialog(){
-        val dialog = AlertDialog.Builder(this).apply{
-            setTitle("Order Confirmed")
-            setCancelable(false)
-            setPositiveButton("Confirm"){_,_ ->
-
-            }
-        }.create()
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
-                setTextColor(Color.parseColor("#81B29A"))
-                setOnClickListener {
-                    dialog.dismiss()
-
-                }
-            }
-
-        }
-        dialog.show()
-
-    }
+    
 
     fun addRewardOrder(item:RewardMenu){
         rewardOrder.add(Order(item.menu, 1, true))
     }
 
-
+    fun checkRemain(itemMenu: Menu):Boolean{
+        val position = menu.indexOf(itemMenu)
+        return (menu[position].remainder > 0)
+    }
 }

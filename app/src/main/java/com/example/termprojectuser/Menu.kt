@@ -1,22 +1,26 @@
 package com.example.termprojectuser
 
 import android.os.Parcel
+import android.os.Parcelable
 import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Menu(
         val imageId: Int,
         val name: String,
         val price: Int,
         var remainder: Int
-        ){
+        ): Parcelable{
         companion object{
                 fun createMenu():ArrayList<Menu>{
                         var menu = ArrayList<Menu>()
-                        menu.add(Menu(1234, "item1", 35,10))
-                        menu.add(Menu(1234, "item2", 35,10))
-                        menu.add(Menu(1234, "item3", 35,10))
-                        menu.add(Menu(1234, "item4", 35,10))
-                        menu.add(Menu(1234, "item5", 35,10))
+                        menu.add(Menu(R.drawable.yuzu_refresher, "Yuzu refresher", 35,10))
+                        menu.add(Menu(R.drawable.classic_brown_sugar_milk_tea,"Classic brown sugar milk tea", 75,10 ))
+                        menu.add(Menu(R.drawable.matcha_brown_sugar_latte, "Matcha brown sugar latte", 105,10))
+                        menu.add(Menu(R.drawable.traditional_thai_milk_tea, "Traditional Thai milk tea", 15,10))
+                        menu.add(Menu(R.drawable.hojicha_latte, "Hojicha latte", 40,10))
+                        menu.add(Menu(R.drawable.caramel_macchiato, "Caramel macchiato", 40,10))
                         return menu
 
                 }
@@ -38,7 +42,7 @@ data class Menu(
         }
 
         override fun equals(other: Any?): Boolean {
-                return (other is Menu) && name == other.name
+                return (other is Menu) && (name == other.name)
         }
 }
 

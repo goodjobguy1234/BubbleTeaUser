@@ -21,12 +21,19 @@ data class User(
                     User("123456", 500)
             )
         }
+        fun isUserExist(item:String, userList: ArrayList<User>):Boolean{
+            return userList.any { it.phoneId == item}
+        }
+
     }
     fun subtractPoint(amount:Int){
         point -= amount
     }
     fun addPoint(amount: Int){
         point += amount
+    }
+    fun update(user: User){
+        point = user.point
     }
     override fun equals(other: Any?): Boolean {
         return (other is User) && (phoneId == other.phoneId)
