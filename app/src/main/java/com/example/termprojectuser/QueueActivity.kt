@@ -16,7 +16,7 @@ class QueueActivity : AppCompatActivity() {
         setContentView(R.layout.activity_queue)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        queueList = Queue.createList()
+//        queueList = Queue.createList()
         init()
         queue_recycler.apply {
             layoutManager = LinearLayoutManager(this@QueueActivity)

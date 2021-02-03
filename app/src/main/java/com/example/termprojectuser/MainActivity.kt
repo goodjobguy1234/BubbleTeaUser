@@ -2,8 +2,9 @@ package com.example.termprojectuser
 
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
@@ -15,11 +16,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import java.lang.Exception
 
 const val REQUEST_CODE = 1
+const val SUBTRACT = 0
+const val ADD = 1
+const val UPDATE = 2
 class MainActivity : BaseActivity() {
-    private lateinit var menu: ArrayList<Menu>
+    private lateinit var menu: FirebaseRecyclerOptions<Menu>
     private lateinit var menu_recycleView: RecyclerView
     private lateinit var confirm_btn: Button
     private lateinit var queue_btn: Button
@@ -33,7 +39,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         init()
         order = ArrayList()
-        menu = Menu.createMenu()
+        menu = FIrebaseMenuHelper.getOption()
         sectionList = ArrayList()
         userList = User.createUser()
         total_txt.text = "Total    0"
@@ -43,53 +49,54 @@ class MainActivity : BaseActivity() {
         menu_recycleView.apply {
             layoutManager = menuLayout
             adapter = MenuAdapter(menu) { item ->
-                var position = order.size
-                if (Order.checkDuplicate(Order(item, 1, false), order)) {
-                    order.forEach {
-                        if (it.item.name == item.name && !it.reward) {
-                            it.addQuantity()
-                            position = order.indexOf(it)
+                FIrebaseMenuHelper.updateRemain(item.name, SUBTRACT)
+                delay {
+                    var position = order.size
+                    if (Order.checkDuplicate(Order(item, 1, false), order)) {
+                        order.forEach {
+                            if (it.item.name == item.name && !it.reward) {
+                                it.addQuantity()
+                                position = order.indexOf(it)
+                            }
                         }
+                    } else {
+                        order.add(Order(item, 1, false))
                     }
-                } else {
-                    order.add(Order(item, 1, false))
+                    order_recycleView.scrollToPosition(position)
+                    fetchOrderRecycler(order, sectionList)
                 }
-                sectionList.clear()
-                sectionList.addAll(RecyclerItem.transformList(order))
-                order_recycleView.adapter?.notifyDataSetChanged()
-                order_recycleView.scrollToPosition(position)
-                addMenu(item)
-                total_txt.text = "Total    ${Order.calculateTotal(order)}"
             }
+
         }
 // change when connect with firebase
         order_recycleView.apply {
             layoutManager = orderLayout
-            adapter = OrderAdapter(sectionList) { position, type ->
+            adapter = OrderAdapter(sectionList) { position, type, name ->
                 val item = sectionList[position]
                 val mposition = order.indexOf((item as RecyclerItem.Product).order)
                 when (type) {
                     1 -> {
-                        cancelMenu(order[mposition].item, order[mposition].quantity)
-                        order.removeAt(mposition)
+                        FIrebaseMenuHelper.updateRemainAmount(name, order[mposition].quantity)
+                            order.removeAt(mposition)
+
                     }
                     2 -> {
-                        order[mposition].addQuantity()
-                        addMenu(order[mposition].item)
-                    }
-                    3 -> {
-                        subtractMenu(order[mposition].item)
-                        order[mposition].subtractQuantity()
-                        if (order[mposition].quantity == 0) {
-                            order.removeAt(mposition)
+                        FIrebaseMenuHelper.updateRemain(name, SUBTRACT){
+                            if (it.checkRemain()){
+                                order[mposition].addQuantity()
+                                fetchOrderRecycler(order, sectionList)
+                            }
                         }
+                        }
+                    3 -> {
+                        FIrebaseMenuHelper.updateRemain(name, ADD)
+                            order[mposition].subtractQuantity()
+                            if (order[mposition].quantity == 0) {
+                                order.removeAt(mposition)
+                            }
                     }
-
                 }
-                sectionList.clear()
-                sectionList.addAll(RecyclerItem.transformList(order))
-                order_recycleView.adapter?.notifyDataSetChanged()
-                total_txt.text = "Total    ${Order.calculateTotal(order)}"
+                fetchOrderRecycler(order, sectionList)
             }
         }
     }
@@ -112,22 +119,7 @@ class MainActivity : BaseActivity() {
         val intent = Intent(this, QueueActivity::class.java)
         startActivity(intent)
     }
-// can delete when connect firebase
-    fun addMenu(item: Menu) {
-        val position = menu.indexOf(item)
-        menu[position].subtractRemain()
-    }
 
-    fun cancelMenu(item: Menu, amount: Int) {
-        val position = menu.indexOf(item)
-        menu[position].addRemainAmount(amount)
-    }
-
-    fun subtractMenu(item: Menu) {
-        val position = menu.indexOf(item)
-        menu[position].addRemain()
-    }
-// delete up to here
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
         outState.putParcelableArrayList("orderlist", order)
@@ -138,8 +130,7 @@ class MainActivity : BaseActivity() {
         val list = savedInstanceState.getParcelableArrayList<Order>("orderlist")
         if (list != null) {
             order = list
-            sectionList.clear()
-            sectionList.addAll(RecyclerItem.transformList(order))
+            fetchOrderRecycler(order, sectionList)
         }
     }
 
@@ -175,7 +166,7 @@ class MainActivity : BaseActivity() {
             val intent = Intent(this, RewardActivity::class.java)
             val position = userList.indexOf(User(phoneId, 0))
             intent.putExtra("user", userList[position])
-            intent.putExtra("menulist", menu)
+//            intent.putExtra("menulist", menu)
             startActivityForResult(intent, REQUEST_CODE)
 
         },{
@@ -198,7 +189,7 @@ class MainActivity : BaseActivity() {
                     } else {
                         order.add(reward)
                     }
-                    addMenu(reward.item)
+//                    addMenu(reward.item)
                 }
                 sectionList.clear()
                 sectionList.addAll(RecyclerItem.transformList(order))
@@ -242,6 +233,30 @@ class MainActivity : BaseActivity() {
         dialog.show()
     }
 
+    override fun onStart() {
+        super.onStart()
+        (menu_recycleView.adapter as FirebaseRecyclerAdapter<*, *>).startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (menu_recycleView.adapter as FirebaseRecyclerAdapter<*, *>).stopListening()
+    }
+
+    fun fetchOrderRecycler(order: ArrayList<Order>, sectionlist:ArrayList<RecyclerItem>){
+        sectionList.clear()
+        sectionList.addAll(RecyclerItem.transformList(order))
+        order_recycleView.adapter?.notifyDataSetChanged()
+        total_txt.text = "Total    ${Order.calculateTotal(order)}"
+    }
+    fun clearOrderRecycler(order: ArrayList<Order>, sectionlist:ArrayList<RecyclerItem>){
+
+    }
+    fun delay(callback: () -> Unit){
+        Handler(Looper.getMainLooper()).postDelayed({
+            callback()
+        }, 100)
+    }
 }
 
 

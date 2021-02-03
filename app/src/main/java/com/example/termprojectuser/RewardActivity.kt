@@ -26,7 +26,7 @@ class RewardActivity : BaseActivity() {
         rewardOrder = ArrayList()
         user = intent.getParcelableExtra<User>("user")!!
         menu = intent.getParcelableArrayListExtra<Menu>("menulist")!!
-        rewardMenu = RewardMenu.createMenu()
+//        rewardMenu = RewardMenu.createMenu()
         phone_txt.text = user.phoneId
         point_txt.text = user.point.toString()
         reward_adapter.apply {
@@ -74,7 +74,7 @@ class RewardActivity : BaseActivity() {
                         showConfirmDialog("Order Confirmed")
                         addRewardOrder(item)
                         val position = menu.indexOf(item.menu)
-                        menu[position].subtractRemain()
+//                        menu[position].subtractRemain()
 
                     }else{
                         dialog.dismiss()
@@ -95,6 +95,6 @@ class RewardActivity : BaseActivity() {
 
     fun checkRemain(itemMenu: Menu):Boolean{
         val position = menu.indexOf(itemMenu)
-        return (menu[position].remainder > 0)
+        return (menu[position].remain > 0)
     }
 }

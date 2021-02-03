@@ -4,15 +4,20 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
+class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu) -> Unit): FirebaseRecyclerAdapter<Menu,MenuAdapter.ViewHolder>(options) {
     private lateinit var mcontext:Context
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.menuImage)
@@ -20,15 +25,10 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
         val itemprice = itemView.findViewById<TextView>(R.id.txt_price)
         val add_btn = itemView.findViewById<ImageButton>(R.id.imageButton_add)
 
-        fun bind(position: Int){
-            itemname.text = menu[position].name
-            itemprice.text = menu[position].price.toString()
-            if (menu[position].remainder == 2){
-                image.setImageResource(menu[position].imageId)
-                unavaliable(image)
-            }else{
-                image.setImageResource(menu[position].imageId)
-            }
+        fun bind(model: Menu){
+            itemname.text = model.name
+            itemprice.text = model.price.toString()
+            Glide.with(mcontext).load(model.imageUrl).into(image)
         }
     }
 
@@ -38,39 +38,18 @@ class MenuAdapter(val menu: ArrayList<Menu>, val callback: (Menu) -> Unit): Recy
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Menu) {
         holder.apply {
-            bind(position)
+            bind(model)
             add_btn.setOnClickListener {
-                if (menu[position].checkRemain()){
-                    Log.d("amount", menu[position].remainder.toString())
-                    callback(menu[position])
+                if (model.checkRemain()){
+                    Log.d("amount", model.remain.toString())
+                    callback(model)
                 }else{
                     Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
                 }
             }
         }
-    }
-
-    override fun getItemCount(): Int {
-        return menu.size
-    }
-
-    fun unavaliable(imageview:ImageView){
-//        val matrix = ColorMatrix()
-//        matrix.setSaturation(0f)
-//        imageview.colorFilter = ColorMatrixColorFilter(matrix)
-        val cm = ColorMatrix()
-        val paint = Paint()
-        cm.set(
-                floatArrayOf(
-                        0.33f, 0.33f, 0.33f, 0f, 0f,
-                        0.33f, 0.33f, 0.33f, 0f, 0f,
-                        0.33f, 0.33f, 0.33f, 0f, 0f,
-                        0f, 0f, 0f, 1f, 0f
-                )
-        )
-        imageview.colorFilter = ColorMatrixColorFilter(cm)
-        
     }
 }

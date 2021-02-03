@@ -19,7 +19,7 @@ class RewardAdapter(val reward:ArrayList<RewardMenu>, val callback: (RewardMenu,
         fun bind(position: Int){
             rewardName.text = reward[position].menu.name
             rewardPrice.text = reward[position].point.toString()
-            imageView.setImageResource(reward[position].menu.imageId)
+//            imageView.setImageResource(reward[position].menu.imageUrl)
         }
 
     }
