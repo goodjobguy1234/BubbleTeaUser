@@ -69,4 +69,5 @@ abstract class BaseActivity() : AppCompatActivity() {
     }
 
     abstract fun getLayoutResourceId():Int
+
 }

@@ -143,6 +143,7 @@ class MainActivity : BaseActivity() {
             setOnClickEditDialog(dialog,{ it, _ ->
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
+                FirebaseQueueHelper.writeValue(order)
                 order.clear()
                 sectionList.clear()
                 total_txt.text = "Total     0"
@@ -151,11 +152,14 @@ class MainActivity : BaseActivity() {
             },{
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
+                FirebaseQueueHelper.writeValue(order)
+                fetchOrderRecycler(order, sectionList)
                 order.clear()
                 sectionList.clear()
                 total_txt.text = "Total     0"
                 order_recycleView.adapter!!.notifyDataSetChanged()
             })
+
             //push queue and order + update user point if has
         }
     }
@@ -235,6 +239,7 @@ class MainActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        setUpLayout()
         (menu_recycleView.adapter as FirebaseRecyclerAdapter<*, *>).startListening()
     }
 

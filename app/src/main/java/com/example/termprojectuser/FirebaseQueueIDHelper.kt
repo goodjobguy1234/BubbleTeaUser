@@ -1,0 +1,37 @@
+package com.example.termprojectuser
+
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+
+object FirebaseQueueIDHelper {
+    private val firebaseInstance = FirebaseDatabase.getInstance()
+    private var queuery = firebaseInstance.reference.child("queueID")
+    fun getCurrentQueue(callback: (String, String) -> Unit){
+        queuery.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val queue = snapshot.child("currentq").getValue(String::class.java)
+                val date = snapshot.child("date").getValue(String::class.java)
+                callback(queue!!, date!!)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+    fun updateCurrentQueue(){
+        getCurrentQueue {queue, _ ->
+            val current = queue
+            val number = current.substring(1).toInt()
+            val newQueue = current.first().plus(((number.plus(1)).toString()))
+            queuery.updateChildren(mapOf(
+                    "currentq" to newQueue
+            ))
+        }
+        // update date
+    }
+
+}

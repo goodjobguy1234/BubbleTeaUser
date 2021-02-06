@@ -5,13 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 
-class QueueAdapter(val queue:ArrayList<Queue>): RecyclerView.Adapter<QueueAdapter.ViewHolder>() {
+class QueueAdapter(options: FirebaseRecyclerOptions<Queue>, val callback: (Int) -> Unit): FirebaseRecyclerAdapter<Queue, QueueAdapter.ViewHolder>(options) {
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val queue_txt = itemView.findViewById<TextView>(R.id.queueid_txt)
-        fun bind(position: Int){
-            queue_txt.text = queue[position].id
+        fun bind(model: Queue){
+            queue_txt.text = model.queueId
         }
     }
 
@@ -20,13 +22,10 @@ class QueueAdapter(val queue:ArrayList<Queue>): RecyclerView.Adapter<QueueAdapte
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Queue) {
         holder.apply {
-            bind(position)
+            bind(model)
+            callback(itemCount)
         }
-    }
-
-    override fun getItemCount(): Int {
-        return queue.size
     }
 }
