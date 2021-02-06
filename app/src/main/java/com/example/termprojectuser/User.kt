@@ -5,8 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
-        val phoneId: String,
-        var point: Int
+        val phoneid: String = "Unknown",
+        var point: Int = -1
 ):Parcelable{
     fun checkPoint(item: RewardMenu): Boolean{
         if (item.point > point){
@@ -15,14 +15,14 @@ data class User(
         return true
     }
     companion object{
-        fun createUser(): ArrayList<User>{
-            return arrayListOf(
-                    User("0639489842", 100),
-                    User("123456", 500)
-            )
-        }
+//        fun createUser(): ArrayList<User>{
+//            return arrayListOf(
+//                    User("0639489842", 100),
+//                    User("123456", 500)
+//            )
+//        }
         fun isUserExist(item:String, userList: ArrayList<User>):Boolean{
-            return userList.any { it.phoneId == item}
+            return userList.any { it.phoneid == item}
         }
 
     }
@@ -36,6 +36,6 @@ data class User(
         point = user.point
     }
     override fun equals(other: Any?): Boolean {
-        return (other is User) && (phoneId == other.phoneId)
+        return (other is User) && (phoneid == other.phoneid)
     }
 }

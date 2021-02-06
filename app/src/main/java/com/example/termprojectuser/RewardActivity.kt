@@ -1,7 +1,5 @@
 package com.example.termprojectuser
 
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -27,7 +25,7 @@ class RewardActivity : BaseActivity() {
         user = intent.getParcelableExtra<User>("user")!!
         menu = intent.getParcelableArrayListExtra<Menu>("menulist")!!
 //        rewardMenu = RewardMenu.createMenu()
-        phone_txt.text = user.phoneId
+        phone_txt.text = user.phoneid
         point_txt.text = user.point.toString()
         reward_adapter.apply {
             layoutManager = GridLayoutManager(this@RewardActivity, 2)

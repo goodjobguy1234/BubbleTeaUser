@@ -8,13 +8,15 @@ import com.google.firebase.database.ValueEventListener
 object FirebaseUserHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("user")
-    fun getUser(phoneId: String, callback: (User) -> Unit){
-        queuery.orderByChild("phoneid").equalTo(phoneId).
+    fun getUser(phoneId: String, callback: (User?) -> Unit){
+        queuery.orderByChild("phoneid").equalTo(phoneId).limitToFirst(1).
         addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
-                    val useritem = snapshot.getValue(User::class.java)
-                    callback(useritem!!)
+                    val useritem = snapshot.child(phoneId).getValue(User::class.java)
+                    callback(useritem)
+                }else{
+                    callback(null)
                 }
             }
 
@@ -25,7 +27,10 @@ object FirebaseUserHelper {
         })
     }
 
-    fun updateUser(){
+    fun updateUser(phoneid: String, point:Int, currentUser: User){
+        val updatePoint = currentUser.point + point
+        val updatedUser = User(currentUser.phoneid, updatePoint)
+        queuery.child(phoneid).setValue(updatedUser)
 
     }
 }

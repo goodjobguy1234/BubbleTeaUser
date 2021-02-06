@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
         order = ArrayList()
         menu = FIrebaseMenuHelper.getOption()
         sectionList = ArrayList()
-        userList = User.createUser()
+//        userList = User.createUser()
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
@@ -138,12 +138,14 @@ class MainActivity : BaseActivity() {
         if (order.isEmpty()) {
             Toast.makeText(this, "Please order something", Toast.LENGTH_LONG).show()
         } else {
-            var dialog = createEditDialog("Input Phone ID")
+            var dialog = createEditDialog("Input Phone ID to retrive ${calculatePoint(order)} point")
             // if accept add point, if not don't add point
-            setOnClickEditDialog(dialog,{ it, _ ->
+            setOnClickEditDialog(dialog,{ it, phoneid, user ->
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
                 FirebaseQueueHelper.writeValue(order)
+                val point = calculatePoint(order)
+                FirebaseUserHelper.updateUser(phoneid, point, user)
                 order.clear()
                 sectionList.clear()
                 total_txt.text = "Total     0"
@@ -165,7 +167,7 @@ class MainActivity : BaseActivity() {
     }
     fun onRedeemRewardBtnClick(view: View) {
         val dialog = createEditDialog("Input Phone ID")
-        setOnClickEditDialog(dialog,{ it, phoneId ->
+        setOnClickEditDialog(dialog,{ it, phoneId, user ->
             it.dismiss()
             val intent = Intent(this, RewardActivity::class.java)
             val position = userList.indexOf(User(phoneId, 0))
@@ -207,7 +209,7 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private fun setOnClickEditDialog(dialog: AlertDialog, callbackpos: (AlertDialog, String) -> Unit,
+    private fun setOnClickEditDialog(dialog: AlertDialog, callbackpos: (AlertDialog, String, User) -> Unit,
                                      callbackneg: (AlertDialog) -> Unit) {
         dialog.setOnShowListener {
             val edit = dialog.findViewById<EditText>(R.id.input_edt)
@@ -217,11 +219,18 @@ class MainActivity : BaseActivity() {
                     val phoneId = edit!!.text
                     //do smt
                     if (phoneId.isNotBlank() && phoneId.isNotEmpty()) {
-                        if (User.isUserExist(phoneId.toString(), userList)){
-                            callbackpos(dialog, phoneId.toString())
-                        }else{
-                            edit.error = "No User"
+                        FirebaseUserHelper.getUser(phoneId.toString()){
+                            if (it != null){
+                                callbackpos(dialog, phoneId.toString(), it)
+                            }else{
+                                edit.error = "No User"
+                            }
                         }
+//                        if (User.isUserExist(phoneId.toString(), userList)){
+//                            callbackpos(dialog, phoneId.toString())
+//                        }else{
+//                            edit.error = "No User"
+//                        }
                     }else{
                         edit.error = "Please input your id"
                     }
@@ -261,6 +270,16 @@ class MainActivity : BaseActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             callback()
         }, 100)
+    }
+    fun calculatePoint(orderlist: ArrayList<Order>): Int {
+        var totalItem = 0
+        val nonRewardList = orderlist.filter {
+            !it.reward
+        }
+        nonRewardList.forEach{
+            totalItem += it.quantity
+        }
+        return (totalItem /2) * 3
     }
 }
 
