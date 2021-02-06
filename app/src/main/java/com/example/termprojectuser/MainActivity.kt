@@ -32,7 +32,6 @@ class MainActivity : BaseActivity() {
     private lateinit var redeem_btn: Button
     private lateinit var total_txt: TextView
     lateinit var sectionList: ArrayList<RecyclerItem>
-    lateinit var userList: ArrayList<User>
     private lateinit var order_recycleView: RecyclerView
     private lateinit var order: ArrayList<Order>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,8 +169,7 @@ class MainActivity : BaseActivity() {
         setOnClickEditDialog(dialog,{ it, phoneId, user ->
             it.dismiss()
             val intent = Intent(this, RewardActivity::class.java)
-            val position = userList.indexOf(User(phoneId, 0))
-            intent.putExtra("user", userList[position])
+            intent.putExtra("user", user)
 //            intent.putExtra("menulist", menu)
             startActivityForResult(intent, REQUEST_CODE)
 
@@ -200,7 +198,7 @@ class MainActivity : BaseActivity() {
                 sectionList.clear()
                 sectionList.addAll(RecyclerItem.transformList(order))
                 order_recycleView.adapter!!.notifyDataSetChanged()
-                userList[userList.indexOf(return_user)].update(return_user)
+//                userList[userList.indexOf(return_user)].update(return_user)
             }
         } catch (ex: Exception) {
             Toast.makeText(this, ex.toString(),
