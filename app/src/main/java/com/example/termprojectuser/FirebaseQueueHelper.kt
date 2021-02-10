@@ -33,6 +33,7 @@ object FirebaseQueueHelper {
 
         }
         FirebaseQueueIDHelper.updateCurrentQueue()
+        FirebaseSalesHelper.updateValue(orderlist)
 
     }
 }

@@ -40,7 +40,6 @@ class MainActivity : BaseActivity() {
         order = ArrayList()
         menu = FIrebaseMenuHelper.getOption()
         sectionList = ArrayList()
-//        userList = User.createUser()
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
@@ -224,11 +223,6 @@ class MainActivity : BaseActivity() {
                                 edit.error = "No User"
                             }
                         }
-//                        if (User.isUserExist(phoneId.toString(), userList)){
-//                            callbackpos(dialog, phoneId.toString())
-//                        }else{
-//                            edit.error = "No User"
-//                        }
                     }else{
                         edit.error = "Please input your id"
                     }
