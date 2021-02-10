@@ -23,7 +23,8 @@ object FirebaseQueueHelper {
             list.add(item)
         }
         list.forEach {
-            postValue.put(it.name, it)
+            if (!it.isReward) postValue.put(it.name, it)
+            else postValue.put("Reward ${it.name}", it)
         }
         FirebaseQueueIDHelper.getCurrentQueue { currentq, date ->
             queuery.child(currentq).apply {

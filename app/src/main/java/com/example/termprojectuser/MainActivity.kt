@@ -169,7 +169,6 @@ class MainActivity : BaseActivity() {
             it.dismiss()
             val intent = Intent(this, RewardActivity::class.java)
             intent.putExtra("user", user)
-//            intent.putExtra("menulist", menu)
             startActivityForResult(intent, REQUEST_CODE)
 
         },{
@@ -192,12 +191,11 @@ class MainActivity : BaseActivity() {
                     } else {
                         order.add(reward)
                     }
-//                    addMenu(reward.item)
                 }
                 sectionList.clear()
                 sectionList.addAll(RecyclerItem.transformList(order))
                 order_recycleView.adapter!!.notifyDataSetChanged()
-//                userList[userList.indexOf(return_user)].update(return_user)
+                FirebaseUserHelper.updateUser(return_user.phoneid, 0, return_user)
             }
         } catch (ex: Exception) {
             Toast.makeText(this, ex.toString(),

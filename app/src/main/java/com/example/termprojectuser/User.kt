@@ -8,7 +8,7 @@ data class User(
         val phoneid: String = "Unknown",
         var point: Int = -1
 ):Parcelable{
-    fun checkPoint(item: RewardMenu): Boolean{
+    fun checkPoint(item: Menu): Boolean{
         if (item.point > point){
             return false
         }
