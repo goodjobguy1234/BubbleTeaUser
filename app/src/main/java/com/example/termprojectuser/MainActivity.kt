@@ -19,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 const val REQUEST_CODE = 1
 const val SUBTRACT = 0
@@ -31,6 +34,7 @@ class MainActivity : BaseActivity() {
     private lateinit var queue_btn: Button
     private lateinit var redeem_btn: Button
     private lateinit var total_txt: TextView
+    private lateinit var queue_txt: TextView
     lateinit var sectionList: ArrayList<RecyclerItem>
     private lateinit var order_recycleView: RecyclerView
     private lateinit var order: ArrayList<Order>
@@ -40,6 +44,7 @@ class MainActivity : BaseActivity() {
         order = ArrayList()
         menu = FIrebaseMenuHelper.getOption()
         sectionList = ArrayList()
+        setQueue()
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
@@ -111,6 +116,7 @@ class MainActivity : BaseActivity() {
         queue_btn = findViewById(R.id.queue_btn)
         redeem_btn = findViewById(R.id.redeem_btn)
         total_txt = findViewById(R.id.total_txt)
+        queue_txt = findViewById(R.id.txt_queue)
     }
 
     fun onQueueBtnClick(view: View) {
@@ -141,7 +147,7 @@ class MainActivity : BaseActivity() {
             setOnClickEditDialog(dialog,{ it, phoneid, user ->
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
-                FirebaseQueueHelper.writeValue(order)
+                FirebaseQueueHelper.writeValue(order, queue_txt)
                 val point = calculatePoint(order)
                 FirebaseUserHelper.updateUser(phoneid, point, user)
                 order.clear()
@@ -152,14 +158,12 @@ class MainActivity : BaseActivity() {
             },{
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
-                FirebaseQueueHelper.writeValue(order)
-                fetchOrderRecycler(order, sectionList)
+                FirebaseQueueHelper.writeValue(order, queue_txt)
                 order.clear()
                 sectionList.clear()
                 total_txt.text = "Total     0"
                 order_recycleView.adapter!!.notifyDataSetChanged()
             })
-
             //push queue and order + update user point if has
         }
     }
@@ -270,6 +274,17 @@ class MainActivity : BaseActivity() {
             totalItem += it.quantity
         }
         return (totalItem /2) * 3
+    }
+    fun setQueue(){
+        FirebaseQueueIDHelper.getCurrentQueue{queueid, date ->
+            val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
+            Log.d("currentDate", currentDate)
+            if (date.equals(currentDate)){
+                FirebaseQueueIDHelper.setQueue("A100", currentDate)
+                FirebaseQueueHelper.resetValue()
+            }
+            queue_txt.text = queueid
+        }
     }
 }
 

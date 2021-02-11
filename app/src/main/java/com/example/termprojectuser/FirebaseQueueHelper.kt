@@ -1,5 +1,6 @@
 package com.example.termprojectuser
 
+import android.widget.TextView
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.FirebaseDatabase
 import kotlin.collections.ArrayList
@@ -15,7 +16,7 @@ object FirebaseQueueHelper {
         return options
     }
 
-    fun writeValue(orderlist: ArrayList<Order>){
+    fun writeValue(orderlist: ArrayList<Order>, queue_txt: TextView){
         val postValue = hashMapOf<String, Any>()
         val list = ArrayList<OrderList>()
         for (i in orderlist){
@@ -33,8 +34,13 @@ object FirebaseQueueHelper {
             }
 
         }
-        FirebaseQueueIDHelper.updateCurrentQueue()
+        FirebaseQueueIDHelper.updateCurrentQueue(){
+            queue_txt.text = it
+        }
         FirebaseSalesHelper.updateValue(orderlist)
 
+    }
+    fun resetValue(){
+        queuery.ref.setValue(null)
     }
 }
