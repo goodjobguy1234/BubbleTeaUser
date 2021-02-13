@@ -1,4 +1,4 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.termprojectuser.Entity.RecyclerItem
+import com.example.termprojectuser.R
 
 const val TYPE_ORDER = 1
 const val TYPE_REDEEM = 2
@@ -87,11 +88,7 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int, S
                         callback(position, 3, (order[position] as RecyclerItem.Product).order.item.name)
                     }
                     add_icon.setOnClickListener {
-//                        if ((order[position] as RecyclerItem.Product).order.item.checkRemain()){
-//                            callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
-//                        }else{
-//                            Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
-//                        }
+
                         callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
 
                     }

@@ -1,11 +1,6 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Adapter
 
 import android.content.Context
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.termprojectuser.Entity.Menu
+import com.example.termprojectuser.R
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) -> Unit): FirebaseRecyclerAdapter<Menu,MenuAdapter.ViewHolder>(options) {
+class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) -> Unit): FirebaseRecyclerAdapter<Menu, MenuAdapter.ViewHolder>(options) {
     private lateinit var mcontext:Context
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.menuImage)

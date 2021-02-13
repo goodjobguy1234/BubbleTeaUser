@@ -1,10 +1,12 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.termprojectuser.Entity.Queue
+import com.example.termprojectuser.R
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 

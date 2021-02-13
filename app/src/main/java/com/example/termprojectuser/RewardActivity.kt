@@ -7,6 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.termprojectuser.Adapter.RewardAdapter
+import com.example.termprojectuser.Entity.Menu
+import com.example.termprojectuser.Entity.Order
+import com.example.termprojectuser.Entity.User
+import com.example.termprojectuser.FirebaseHelper.FIrebaseMenuHelper
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
@@ -60,7 +65,7 @@ class RewardActivity : BaseActivity() {
         reward_recycler = findViewById(R.id.redeem_recycler)
     }
 
-    fun showDialog(item:Menu){
+    fun showDialog(item: Menu){
         val dialog = createNormalDialog("Do you want to buy ${item.name}?")
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
@@ -84,7 +89,7 @@ class RewardActivity : BaseActivity() {
         }
 
 
-    fun addRewardOrder(item:Menu){
+    fun addRewardOrder(item: Menu){
         rewardOrder.add(Order(item, 1, true))
     }
 

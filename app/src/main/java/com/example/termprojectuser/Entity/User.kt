@@ -1,4 +1,4 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -15,12 +15,7 @@ data class User(
         return true
     }
     companion object{
-//        fun createUser(): ArrayList<User>{
-//            return arrayListOf(
-//                    User("0639489842", 100),
-//                    User("123456", 500)
-//            )
-//        }
+
         fun isUserExist(item:String, userList: ArrayList<User>):Boolean{
             return userList.any { it.phoneid == item}
         }

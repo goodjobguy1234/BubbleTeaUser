@@ -1,6 +1,6 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.FirebaseHelper
 
-import android.util.Log
+import com.example.termprojectuser.Entity.Order
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

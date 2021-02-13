@@ -11,11 +11,20 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.termprojectuser.Adapter.MenuAdapter
+import com.example.termprojectuser.Adapter.OrderAdapter
+import com.example.termprojectuser.Entity.Menu
+import com.example.termprojectuser.Entity.Order
+import com.example.termprojectuser.Entity.RecyclerItem
+import com.example.termprojectuser.Entity.User
+import com.example.termprojectuser.FirebaseHelper.FIrebaseMenuHelper
+import com.example.termprojectuser.FirebaseHelper.FirebaseQueueHelper
+import com.example.termprojectuser.FirebaseHelper.FirebaseQueueIDHelper
+import com.example.termprojectuser.FirebaseHelper.FirebaseUserHelper
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import java.lang.Exception
@@ -287,7 +296,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun setQueue(){
-        FirebaseQueueIDHelper.getCurrentQueue{queueid, date ->
+        FirebaseQueueIDHelper.getCurrentQueue{ queueid, date ->
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
             Log.d("currentDate", currentDate)
 

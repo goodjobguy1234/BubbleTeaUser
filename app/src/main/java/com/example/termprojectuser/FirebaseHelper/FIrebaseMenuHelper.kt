@@ -1,5 +1,8 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.FirebaseHelper
 
+import com.example.termprojectuser.ADD
+import com.example.termprojectuser.Entity.Menu
+import com.example.termprojectuser.SUBTRACT
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.*
 

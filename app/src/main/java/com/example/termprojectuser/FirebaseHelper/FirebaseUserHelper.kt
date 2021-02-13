@@ -1,5 +1,6 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.FirebaseHelper
 
+import com.example.termprojectuser.Entity.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

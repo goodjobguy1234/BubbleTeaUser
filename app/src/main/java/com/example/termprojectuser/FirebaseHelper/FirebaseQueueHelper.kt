@@ -1,6 +1,9 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.FirebaseHelper
 
 import android.widget.TextView
+import com.example.termprojectuser.Entity.Order
+import com.example.termprojectuser.Entity.OrderList
+import com.example.termprojectuser.Entity.Queue
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.FirebaseDatabase
 import kotlin.collections.ArrayList
@@ -34,7 +37,7 @@ object FirebaseQueueHelper {
             }
 
         }
-        FirebaseQueueIDHelper.updateCurrentQueue(){
+        FirebaseQueueIDHelper.updateCurrentQueue() {
             queue_txt.text = it
         }
         FirebaseSalesHelper.updateValue(orderlist)

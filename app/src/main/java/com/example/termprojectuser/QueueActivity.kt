@@ -1,13 +1,14 @@
 package com.example.termprojectuser
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.termprojectuser.Adapter.QueueAdapter
+import com.example.termprojectuser.Entity.Queue
+import com.example.termprojectuser.FirebaseHelper.FirebaseQueueHelper
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
