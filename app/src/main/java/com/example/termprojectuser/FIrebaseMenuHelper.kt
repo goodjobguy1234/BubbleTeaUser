@@ -13,12 +13,15 @@ object FIrebaseMenuHelper {
             .build()
         return options
     }
-    fun updateRemain(menuname: String, TYPE: Int, callback: ((Menu) -> Unit)? = null){
+    fun updateRemain(menuname: String, TYPE: Int, callback: ((Menu?) -> Unit)? = null){
         queuery.orderByKey().equalTo(menuname).limitToFirst(1)
                 .addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
                        snapshot.children.first().getValue(Menu::class.java).let{
-                           if(it!!.checkRemain() && TYPE == SUBTRACT){
+                           if (!it!!.checkRemain() && TYPE == SUBTRACT){
+                               callback?.invoke(null)
+                           }
+                           if(it.checkRemain() && TYPE == SUBTRACT){
                                callback?.invoke(it)
                                it.subtractRemain()
                            }

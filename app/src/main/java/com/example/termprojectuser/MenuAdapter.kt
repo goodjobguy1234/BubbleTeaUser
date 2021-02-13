@@ -17,7 +17,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu) -> Unit): FirebaseRecyclerAdapter<Menu,MenuAdapter.ViewHolder>(options) {
+class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) -> Unit): FirebaseRecyclerAdapter<Menu,MenuAdapter.ViewHolder>(options) {
     private lateinit var mcontext:Context
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.menuImage)
@@ -47,7 +47,7 @@ class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu) -
                     Log.d("amount", model.remain.toString())
                     callback(model)
                 }else{
-                    Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
+                    callback(null)
                 }
             }
         }

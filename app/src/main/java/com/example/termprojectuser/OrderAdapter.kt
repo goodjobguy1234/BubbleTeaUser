@@ -87,11 +87,12 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int, S
                         callback(position, 3, (order[position] as RecyclerItem.Product).order.item.name)
                     }
                     add_icon.setOnClickListener {
-                        if ((order[position] as RecyclerItem.Product).order.item.checkRemain()){
-                            callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
-                        }else{
-                            Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
-                        }
+//                        if ((order[position] as RecyclerItem.Product).order.item.checkRemain()){
+//                            callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
+//                        }else{
+//                            Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
+//                        }
+                        callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
 
                     }
                 }

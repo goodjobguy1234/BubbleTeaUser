@@ -40,6 +40,7 @@ class MainActivity : BaseActivity() {
     private lateinit var order: ArrayList<Order>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         init()
         order = ArrayList()
         menu = FIrebaseMenuHelper.getOption()
@@ -48,35 +49,40 @@ class MainActivity : BaseActivity() {
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
-        // change when connect with firebase
+
         menu_recycleView.apply {
             layoutManager = menuLayout
-            adapter = MenuAdapter(menu) { item ->
-                FIrebaseMenuHelper.updateRemain(item.name, SUBTRACT)
-                delay {
-                    var position = order.size
-                    if (Order.checkDuplicate(Order(item, 1, false), order)) {
-                        order.forEach {
-                            if (it.item.name == item.name && !it.reward) {
-                                it.addQuantity()
-                                position = order.indexOf(it)
-                            }
-                        }
-                    } else {
-                        order.add(Order(item, 1, false))
-                    }
-                    order_recycleView.scrollToPosition(position)
-                    fetchOrderRecycler(order, sectionList)
-                }
-            }
 
+            adapter = MenuAdapter(menu) { item ->
+                item?.let {menu ->
+                    FIrebaseMenuHelper.updateRemain(menu.name, SUBTRACT)
+
+                    delay {
+                        var position = order.size
+                        if (Order.checkDuplicate(Order(menu, 1, false), order)) {
+                            order.forEach {
+                                if (it.item.name == menu.name && !it.reward) {
+                                    it.addQuantity()
+                                    position = order.indexOf(it)
+                                }
+                            }
+                        } else {
+                            order.add(Order(item, 1, false))
+                        }
+                        order_recycleView.scrollToPosition(position)
+                        fetchOrderRecycler(order, sectionList)
+                    }
+                } ?: showToast(context, "Out of Stock")
+
+            }
         }
-// change when connect with firebase
+
         order_recycleView.apply {
             layoutManager = orderLayout
             adapter = OrderAdapter(sectionList) { position, type, name ->
                 val item = sectionList[position]
                 val mposition = order.indexOf((item as RecyclerItem.Product).order)
+
                 when (type) {
                     1 -> {
                         FIrebaseMenuHelper.updateRemainAmount(name, order[mposition].quantity)
@@ -85,11 +91,11 @@ class MainActivity : BaseActivity() {
                     }
                     2 -> {
                         FIrebaseMenuHelper.updateRemain(name, SUBTRACT){
-                            if (it.checkRemain()){
+                            it?.let {
                                 order[mposition].addQuantity()
                                 fetchOrderRecycler(order, sectionList)
+                            }?: showToast(context, "Out of Stock")
                             }
-                        }
                         }
                     3 -> {
                         FIrebaseMenuHelper.updateRemain(name, ADD)
@@ -108,10 +114,9 @@ class MainActivity : BaseActivity() {
         return R.layout.activity_main
     }
 
-
     fun init() {
-        menu_recycleView = findViewById<RecyclerView>(R.id.menu_recycleview)
-        order_recycleView = findViewById<RecyclerView>(R.id.order_recycleview)
+        menu_recycleView = findViewById(R.id.menu_recycleview)
+        order_recycleView = findViewById(R.id.order_recycleview)
         confirm_btn = findViewById(R.id.confirm_btn)
         queue_btn = findViewById(R.id.queue_btn)
         redeem_btn = findViewById(R.id.redeem_btn)
@@ -140,7 +145,7 @@ class MainActivity : BaseActivity() {
 
     fun onConfirmBtnClick(view: View) {
         if (order.isEmpty()) {
-            Toast.makeText(this, "Please order something", Toast.LENGTH_LONG).show()
+            showToast(this,"Please order something" )
         } else {
             var dialog = createEditDialog("Input Phone ID to retrive ${calculatePoint(order)} point")
             // if accept add point, if not don't add point
@@ -187,7 +192,7 @@ class MainActivity : BaseActivity() {
             if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
                 val arrayitem = data!!.getParcelableArrayListExtra<Order>("item")
                 val return_user = data.getParcelableExtra<User>("return_user")!!
-                Log.d("returnOrder", arrayitem.toString())
+
                 arrayitem!!.forEach { reward ->
                     if (Order.checkDuplicate(reward, order)) {
                         val position = order.indexOf(reward)
@@ -202,14 +207,15 @@ class MainActivity : BaseActivity() {
                 FirebaseUserHelper.updateUser(return_user.phoneid, 0, return_user)
             }
         } catch (ex: Exception) {
-            Toast.makeText(this, ex.toString(),
-                    Toast.LENGTH_SHORT).show()
+            showToast(this, ex.toString())
         }
 
     }
 
-    private fun setOnClickEditDialog(dialog: AlertDialog, callbackpos: (AlertDialog, String, User) -> Unit,
-                                     callbackneg: (AlertDialog) -> Unit) {
+    private fun setOnClickEditDialog(dialog: AlertDialog,
+                                     callbackpos: (AlertDialog, String, User) -> Unit,
+                                     callbackneg: (AlertDialog) -> Unit
+    ) {
         dialog.setOnShowListener {
             val edit = dialog.findViewById<EditText>(R.id.input_edt)
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
@@ -257,32 +263,39 @@ class MainActivity : BaseActivity() {
         order_recycleView.adapter?.notifyDataSetChanged()
         total_txt.text = "Total    ${Order.calculateTotal(order)}"
     }
+
     fun clearOrderRecycler(order: ArrayList<Order>, sectionlist:ArrayList<RecyclerItem>){
 
     }
+
     fun delay(callback: () -> Unit){
         Handler(Looper.getMainLooper()).postDelayed({
             callback()
         }, 100)
     }
+
     fun calculatePoint(orderlist: ArrayList<Order>): Int {
         var totalItem = 0
         val nonRewardList = orderlist.filter {
             !it.reward
         }
+
         nonRewardList.forEach{
             totalItem += it.quantity
         }
         return (totalItem /2) * 3
     }
+
     fun setQueue(){
         FirebaseQueueIDHelper.getCurrentQueue{queueid, date ->
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
             Log.d("currentDate", currentDate)
+
             if (date.equals(currentDate)){
                 FirebaseQueueIDHelper.setQueue("A100", currentDate)
                 FirebaseQueueHelper.resetValue()
             }
+
             queue_txt.text = queueid
         }
     }
