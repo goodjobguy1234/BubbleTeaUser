@@ -11,24 +11,7 @@ data class Menu(
         val name: String = "Unknow",
         val point: Int =-1,
         val price: Int = -1
-//        var remain: Int = -1
         ): Parcelable{
-
-//        fun subtractRemain(){
-//                remain--
-//        }
-//        fun addRemain(){
-//                remain++
-//        }
-//        fun addRemainAmount(amount: Int){
-//                remain += amount
-//        }
-//        fun checkRemain():Boolean{
-//                if (remain >= 1){
-//                        return true
-//                }
-//                return false
-//        }
 
         override fun equals(other: Any?): Boolean {
                 return (other is Menu) && (name == other.name)
@@ -39,7 +22,6 @@ data class Menu(
                         "name" to name,
                         "point" to point,
                         "price" to price,
-//                        "remain" to remain
                 )
         }
 }
@@ -54,7 +36,7 @@ object MenuClassParceler: Parceler<Menu> {
                 parcel.writeString(name)
                 parcel.writeInt(point)
                 parcel.writeInt(price)
-//                parcel.writeInt(remain)
+
         }
 
 }

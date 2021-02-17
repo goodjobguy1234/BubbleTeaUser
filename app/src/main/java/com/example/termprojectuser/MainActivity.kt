@@ -64,8 +64,6 @@ class MainActivity : BaseActivity() {
 
             adapter = MenuAdapter(menu) { item ->
                 item?.let {menu ->
-//                    FIrebaseMenuHelper.updateRemain(menu.name, SUBTRACT)
-
                     delay {
                         var position = order.size
                         if (Order.checkDuplicate(Order(menu, 1, false), order)) {
@@ -94,29 +92,27 @@ class MainActivity : BaseActivity() {
 
                 when (type) {
                     1 -> {
-//                        FIrebaseMenuHelper.updateRemainAmount(name, order[mposition].quantity)
                             order.removeAt(mposition)
 
                     }
                     2 -> {
-//                        FIrebaseMenuHelper.updateRemain(name, SUBTRACT){
-//                            it?.let {
-//                                order[mposition].addQuantity()
-//                                fetchOrderRecycler(order, sectionList)
-//                            }?: showToast(context, "Out of Stock")
-//                            }
+
                         order[mposition].addQuantity()
                         fetchOrderRecycler(order, sectionList)
+
                         }
                     3 -> {
-//                        FIrebaseMenuHelper.updateRemain(name, ADD)
+
                             order[mposition].subtractQuantity()
                             if (order[mposition].quantity == 0) {
                                 order.removeAt(mposition)
                             }
+
                     }
                 }
+
                 fetchOrderRecycler(order, sectionList)
+
             }
         }
     }
@@ -126,6 +122,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun init() {
+
         menu_recycleView = findViewById(R.id.menu_recycleview)
         order_recycleView = findViewById(R.id.order_recycleview)
         confirm_btn = findViewById(R.id.confirm_btn)
@@ -133,25 +130,32 @@ class MainActivity : BaseActivity() {
         redeem_btn = findViewById(R.id.redeem_btn)
         total_txt = findViewById(R.id.total_txt)
         queue_txt = findViewById(R.id.txt_queue)
+
     }
 
     fun onQueueBtnClick(view: View) {
+
         val intent = Intent(this, QueueActivity::class.java)
         startActivity(intent)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+
         super.onSaveInstanceState(outState, outPersistentState)
         outState.putParcelableArrayList("orderlist", order)
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+
         super.onRestoreInstanceState(savedInstanceState)
         val list = savedInstanceState.getParcelableArrayList<Order>("orderlist")
         if (list != null) {
             order = list
             fetchOrderRecycler(order, sectionList)
         }
+
     }
 
     fun onConfirmBtnClick(view: View) {
@@ -273,10 +277,6 @@ class MainActivity : BaseActivity() {
         sectionList.addAll(RecyclerItem.transformList(order))
         order_recycleView.adapter?.notifyDataSetChanged()
         total_txt.text = "Total    ${Order.calculateTotal(order)}"
-    }
-
-    fun clearOrderRecycler(order: ArrayList<Order>, sectionlist:ArrayList<RecyclerItem>){
-
     }
 
     fun delay(callback: () -> Unit){

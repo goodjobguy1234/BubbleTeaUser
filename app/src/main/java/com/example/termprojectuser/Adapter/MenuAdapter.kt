@@ -40,12 +40,6 @@ class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) 
         holder.apply {
             bind(model)
             add_btn.setOnClickListener {
-//                if (model.checkRemain()){
-//                    Log.d("amount", model.remain.toString())
-//                    callback(model)
-//                }else{
-//                    callback(null)
-//                }
                 callback(model)
             }
         }
