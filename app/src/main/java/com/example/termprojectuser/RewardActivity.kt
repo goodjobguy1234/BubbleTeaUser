@@ -35,11 +35,12 @@ class RewardActivity : BaseActivity() {
         reward_recycler.apply {
             layoutManager = GridLayoutManager(this@RewardActivity, 2)
             adapter = RewardAdapter(rewardMenu){ item ->
-                if(item.checkRemain()){
-                    showDialog(item)
-                }else{
-                    Toast.makeText(this@RewardActivity, "This menu is unavaliable", Toast.LENGTH_LONG).show()
-                }
+//                if(item.checkRemain()){
+//                    showDialog(item)
+//                }else{
+//                    Toast.makeText(this@RewardActivity, "This menu is unavaliable", Toast.LENGTH_LONG).show()
+//                }
+                showDialog(item)
 
             }
         }
@@ -76,7 +77,7 @@ class RewardActivity : BaseActivity() {
                         dialog.dismiss()
                         showConfirmDialog("Order Confirmed")
                         addRewardOrder(item)
-                        FIrebaseMenuHelper.updateRemain(item.name, SUBTRACT)
+//                        FIrebaseMenuHelper.updateRemain(item.name, SUBTRACT)
                     }else{
                         dialog.dismiss()
                         showConfirmDialog("Not enough Point")

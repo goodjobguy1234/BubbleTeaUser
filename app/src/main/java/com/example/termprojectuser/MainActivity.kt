@@ -64,7 +64,7 @@ class MainActivity : BaseActivity() {
 
             adapter = MenuAdapter(menu) { item ->
                 item?.let {menu ->
-                    FIrebaseMenuHelper.updateRemain(menu.name, SUBTRACT)
+//                    FIrebaseMenuHelper.updateRemain(menu.name, SUBTRACT)
 
                     delay {
                         var position = order.size
@@ -94,20 +94,22 @@ class MainActivity : BaseActivity() {
 
                 when (type) {
                     1 -> {
-                        FIrebaseMenuHelper.updateRemainAmount(name, order[mposition].quantity)
+//                        FIrebaseMenuHelper.updateRemainAmount(name, order[mposition].quantity)
                             order.removeAt(mposition)
 
                     }
                     2 -> {
-                        FIrebaseMenuHelper.updateRemain(name, SUBTRACT){
-                            it?.let {
-                                order[mposition].addQuantity()
-                                fetchOrderRecycler(order, sectionList)
-                            }?: showToast(context, "Out of Stock")
-                            }
+//                        FIrebaseMenuHelper.updateRemain(name, SUBTRACT){
+//                            it?.let {
+//                                order[mposition].addQuantity()
+//                                fetchOrderRecycler(order, sectionList)
+//                            }?: showToast(context, "Out of Stock")
+//                            }
+                        order[mposition].addQuantity()
+                        fetchOrderRecycler(order, sectionList)
                         }
                     3 -> {
-                        FIrebaseMenuHelper.updateRemain(name, ADD)
+//                        FIrebaseMenuHelper.updateRemain(name, ADD)
                             order[mposition].subtractQuantity()
                             if (order[mposition].quantity == 0) {
                                 order.removeAt(mposition)
