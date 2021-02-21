@@ -41,4 +41,19 @@ object FirebaseQueueIDHelper {
         ))
     }
 
+    fun getRealtimeCurrentQueue(callback: (String, String) -> Unit){
+        queuery.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val queue = snapshot.child("currentq").getValue(String::class.java)
+                val date = snapshot.child("date").getValue(String::class.java)
+                callback(queue!!, date!!)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
 }

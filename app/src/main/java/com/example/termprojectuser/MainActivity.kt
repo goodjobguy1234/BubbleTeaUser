@@ -33,9 +33,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 const val REQUEST_CODE = 1
-const val SUBTRACT = 0
-const val ADD = 1
-const val UPDATE = 2
 class MainActivity : BaseActivity() {
     private lateinit var menu: FirebaseRecyclerOptions<Menu>
     private lateinit var menu_recycleView: RecyclerView
@@ -54,7 +51,6 @@ class MainActivity : BaseActivity() {
         order = ArrayList()
         menu = FIrebaseMenuHelper.getOption()
         sectionList = ArrayList()
-        setQueue()
         total_txt.text = "Total    0"
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
@@ -64,7 +60,6 @@ class MainActivity : BaseActivity() {
 
             adapter = MenuAdapter(menu) { item ->
                 item?.let {menu ->
-                    delay {
                         var position = order.size
                         if (Order.checkDuplicate(Order(menu, 1, false), order)) {
                             order.forEach {
@@ -78,7 +73,6 @@ class MainActivity : BaseActivity() {
                         }
                         order_recycleView.scrollToPosition(position)
                         fetchOrderRecycler(order, sectionList)
-                    }
                 } ?: showToast(context, "Out of Stock")
 
             }
@@ -98,7 +92,7 @@ class MainActivity : BaseActivity() {
                     2 -> {
 
                         order[mposition].addQuantity()
-                        fetchOrderRecycler(order, sectionList)
+//                        fetchOrderRecycler(order, sectionList)
 
                         }
                     3 -> {
@@ -265,6 +259,7 @@ class MainActivity : BaseActivity() {
         super.onStart()
         setUpLayout()
         (menu_recycleView.adapter as FirebaseRecyclerAdapter<*, *>).startListening()
+        setQueue()
     }
 
     override fun onStop() {
@@ -277,12 +272,6 @@ class MainActivity : BaseActivity() {
         sectionList.addAll(RecyclerItem.transformList(order))
         order_recycleView.adapter?.notifyDataSetChanged()
         total_txt.text = "Total    ${Order.calculateTotal(order)}"
-    }
-
-    fun delay(callback: () -> Unit){
-        Handler(Looper.getMainLooper()).postDelayed({
-            callback()
-        }, 100)
     }
 
     fun calculatePoint(orderlist: ArrayList<Order>): Int {
@@ -298,15 +287,14 @@ class MainActivity : BaseActivity() {
     }
 
     fun setQueue(){
-        FirebaseQueueIDHelper.getCurrentQueue{ queueid, date ->
+        FirebaseQueueIDHelper.getRealtimeCurrentQueue{ queueid, date ->
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
             Log.d("currentDate", currentDate)
-
-            if (date.equals(currentDate)){
+            Log.d("date", date)
+            if (!date.equals(currentDate)){
                 FirebaseQueueIDHelper.setQueue("A100", currentDate)
                 FirebaseQueueHelper.resetValue()
             }
-
             queue_txt.text = queueid
         }
     }
