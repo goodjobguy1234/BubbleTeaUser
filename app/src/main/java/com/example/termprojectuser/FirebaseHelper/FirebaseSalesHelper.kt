@@ -24,6 +24,10 @@ object FirebaseSalesHelper {
 
             })
     }
+    /*
+    * it update some value
+    * used setvalue to fix!!
+    * */
     fun updateValue(orderlist: ArrayList<Order>){
         currentQuantity = 0
         orderlist.forEach {orderitem ->
