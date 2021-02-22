@@ -37,9 +37,10 @@ object FirebaseQueueHelper {
             }
 
         }
-        FirebaseQueueIDHelper.updateCurrentQueue() {
-            queue_txt.text = it
-        }
+//        FirebaseQueueIDHelper.updateCurrentQueue() {
+//            queue_txt.text = it
+//        }
+        FirebaseQueueIDHelper.updateCurrentQueue(null)
         FirebaseSalesHelper.updateValue(orderlist)
 
     }

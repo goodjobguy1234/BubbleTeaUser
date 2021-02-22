@@ -21,10 +21,7 @@ import com.example.termprojectuser.Entity.Menu
 import com.example.termprojectuser.Entity.Order
 import com.example.termprojectuser.Entity.RecyclerItem
 import com.example.termprojectuser.Entity.User
-import com.example.termprojectuser.FirebaseHelper.FIrebaseMenuHelper
-import com.example.termprojectuser.FirebaseHelper.FirebaseQueueHelper
-import com.example.termprojectuser.FirebaseHelper.FirebaseQueueIDHelper
-import com.example.termprojectuser.FirebaseHelper.FirebaseUserHelper
+import com.example.termprojectuser.FirebaseHelper.*
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import java.lang.Exception
@@ -294,6 +291,7 @@ class MainActivity : BaseActivity() {
             if (!date.equals(currentDate)){
                 FirebaseQueueIDHelper.setQueue("A100", currentDate)
                 FirebaseQueueHelper.resetValue()
+                FirebaseSalesHelper.resetSalesQuantity()
             }
             queue_txt.text = queueid
         }

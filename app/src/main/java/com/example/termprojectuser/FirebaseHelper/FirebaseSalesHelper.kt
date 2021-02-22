@@ -1,6 +1,7 @@
 package com.example.termprojectuser.FirebaseHelper
 
 import com.example.termprojectuser.Entity.Order
+import com.example.termprojectuser.Entity.Sale
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -24,14 +25,45 @@ object FirebaseSalesHelper {
             })
     }
     fun updateValue(orderlist: ArrayList<Order>){
+        currentQuantity = 0
         orderlist.forEach {orderitem ->
             if (!orderitem.reward){
                 getCurrentQuantity(orderitem.item.name)
                 queuery.child(orderitem.item.name).updateChildren(mapOf(
                     "quantity" to (orderitem.quantity + currentQuantity)
                 ))
+                currentQuantity = 0
+            }
+            currentQuantity = 0
+        }
+        currentQuantity = 0
+    }
+
+    fun resetSalesQuantity(){
+        queuery.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val item = it.getValue(Sale::class.java)
+                    writeValue(item!!)
+                }
             }
 
-        }
-        }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
+
+    fun writeValue(item: Sale){
+        queuery.child(item.name).setValue(
+                Sale(
+                        item.imageUrl,
+                        item.name,
+                        item.price,
+                        0
+                )
+        )
+    }
+
+}

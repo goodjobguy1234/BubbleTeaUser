@@ -22,7 +22,7 @@ object FirebaseQueueIDHelper {
 
         })
     }
-    fun updateCurrentQueue(callback: (String) -> Unit){
+    fun updateCurrentQueue(callback: ((String) -> Unit)?){
         getCurrentQueue {queue, _ ->
             val current = queue
             val number = current.substring(1).toInt()
@@ -30,7 +30,7 @@ object FirebaseQueueIDHelper {
             queuery.updateChildren(mapOf(
                     "currentq" to newQueue
             ))
-            callback(newQueue)
+            callback?.invoke(newQueue)
         }
         // update date
     }
