@@ -14,7 +14,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) -> Unit): FirebaseRecyclerAdapter<Menu, MenuAdapter.ViewHolder>(options) {
+class MenuAdapter(options: FirebaseRecyclerOptions<Menu>,
+                  val progressBar: ProgressBar,
+                  val menuRecycler: RecyclerView,
+                  val callback: (Menu?) -> Unit): FirebaseRecyclerAdapter<Menu, MenuAdapter.ViewHolder>(options) {
+
     private lateinit var mcontext:Context
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.menuImage)
@@ -35,6 +39,15 @@ class MenuAdapter(options: FirebaseRecyclerOptions<Menu>, val callback: (Menu?) 
         return ViewHolder(view)
     }
 
+    override fun onDataChanged() {
+        super.onDataChanged()
+        if (itemCount == 0){
+            progressBar.visibility = View.VISIBLE
+            menuRecycler.visibility = View.GONE
+        }
+        progressBar.visibility = View.GONE
+        menuRecycler.visibility = View.VISIBLE
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, model: Menu) {
         holder.apply {

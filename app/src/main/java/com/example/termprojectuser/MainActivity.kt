@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,6 +39,7 @@ class MainActivity : BaseActivity() {
     private lateinit var redeem_btn: Button
     private lateinit var total_txt: TextView
     private lateinit var queue_txt: TextView
+    private lateinit var progressBar: ProgressBar
     lateinit var sectionList: ArrayList<RecyclerItem>
     private lateinit var order_recycleView: RecyclerView
     private lateinit var order: ArrayList<Order>
@@ -55,7 +57,7 @@ class MainActivity : BaseActivity() {
         menu_recycleView.apply {
             layoutManager = menuLayout
 
-            adapter = MenuAdapter(menu) { item ->
+            adapter = MenuAdapter(menu, progressBar, menu_recycleView) { item ->
                 item?.let {menu ->
                         var position = order.size
                         if (Order.checkDuplicate(Order(menu, 1, false), order)) {
@@ -113,7 +115,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun init() {
-
+        progressBar = findViewById(R.id.mprogressbar)
         menu_recycleView = findViewById(R.id.menu_recycleview)
         order_recycleView = findViewById(R.id.order_recycleview)
         confirm_btn = findViewById(R.id.confirm_btn)

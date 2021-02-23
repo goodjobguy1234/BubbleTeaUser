@@ -10,12 +10,11 @@ import com.google.firebase.database.ValueEventListener
 object FirebaseSalesHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("sale")
-    private var currentQuantity = 0
-    fun getCurrentQuantity(name:String){
+    fun getCurrentQuantity(name:String, callback: (Int) -> Unit){
         queuery.addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val quantity = snapshot.child(name).child("quantity").getValue(Double::class.java)
-                    currentQuantity = (quantity!!.toInt())
+                   callback(quantity!!.toInt())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -29,18 +28,24 @@ object FirebaseSalesHelper {
     * used setvalue to fix!!
     * */
     fun updateValue(orderlist: ArrayList<Order>){
-        currentQuantity = 0
         orderlist.forEach {orderitem ->
             if (!orderitem.reward){
-                getCurrentQuantity(orderitem.item.name)
-                queuery.child(orderitem.item.name).updateChildren(mapOf(
-                    "quantity" to (orderitem.quantity + currentQuantity)
-                ))
-                currentQuantity = 0
+                getCurrentQuantity(orderitem.item.name){currentQuantity ->
+                    writeValue(
+                            Sale(orderitem.item.imageUrl,
+                                    orderitem.item.name,
+                                    orderitem.item.price,
+                                    orderitem.quantity
+                            ),
+                            (orderitem.quantity + currentQuantity)
+                    )
+                }
+
+//                queuery.child(orderitem.item.name).updateChildren(mapOf(
+//                    "quantity" to (orderitem.quantity + currentQuantity)
+//                ))
             }
-            currentQuantity = 0
         }
-        currentQuantity = 0
     }
 
     fun resetSalesQuantity(){
@@ -48,7 +53,7 @@ object FirebaseSalesHelper {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach {
                     val item = it.getValue(Sale::class.java)
-                    writeValue(item!!)
+                    writeValue(item!!, 0)
                 }
             }
 
@@ -59,13 +64,13 @@ object FirebaseSalesHelper {
         })
     }
 
-    fun writeValue(item: Sale){
+    fun writeValue(item: Sale, quantity: Int){
         queuery.child(item.name).setValue(
                 Sale(
                         item.imageUrl,
                         item.name,
                         item.price,
-                        0
+                        quantity
                 )
         )
     }
