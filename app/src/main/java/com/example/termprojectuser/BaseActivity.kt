@@ -1,9 +1,11 @@
 package com.example.termprojectuser
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
@@ -67,6 +69,10 @@ abstract class BaseActivity() : AppCompatActivity() {
             }
         }.create()
     }
+    fun showToast(context: Context, massage: String){
+        Toast.makeText(context, massage, Toast.LENGTH_SHORT).show()
+    }
 
     abstract fun getLayoutResourceId():Int
+
 }

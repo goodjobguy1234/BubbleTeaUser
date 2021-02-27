@@ -1,4 +1,4 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.termprojectuser.Entity.RecyclerItem
+import com.example.termprojectuser.R
 
 const val TYPE_ORDER = 1
 const val TYPE_REDEEM = 2
 const val TYPE_HEADER = 0
-class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -> Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int, String) -> Unit):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var mcontext: Context
     inner class OrderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val image = itemView.findViewById<ImageView>(R.id.orderimageview)
@@ -27,7 +29,7 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -
             quantity.text = (order[position] as RecyclerItem.Product).order.quantity.toString()
             orderprice.text = (order[position] as RecyclerItem.Product).order.item.price.toString()
             ordername.text = (order[position] as RecyclerItem.Product).order.item.name
-            image.setImageResource((order[position] as RecyclerItem.Product).order.item.imageId)
+            Glide.with(mcontext).load((order[position] as RecyclerItem.Product).order.item.imageUrl).into(image)
         }
     }
     inner class RedeemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -37,7 +39,7 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -
         fun bind(position: Int){
             redeemname.text = (order[position] as RecyclerItem.Product).order.item.name
             reedeemquantity.text = (order[position] as RecyclerItem.Product).order.quantity.toString()
-            image.setImageResource((order[position] as RecyclerItem.Product).order.item.imageId)
+            Glide.with(mcontext).load((order[position] as RecyclerItem.Product).order.item.imageUrl).into(image)
         }
 
     }
@@ -80,17 +82,14 @@ class OrderAdapter(val order:ArrayList<RecyclerItem>, val callback: (Int, Int) -
                 (holder as OrderViewHolder).apply {
                     bind(position)
                     cancel_icon.setOnClickListener {
-                        callback(position, 1)
+                        callback(position, 1, (order[position] as RecyclerItem.Product).order.item.name)
                     }
                     minus_icon.setOnClickListener {
-                        callback(position, 3)
+                        callback(position, 3, (order[position] as RecyclerItem.Product).order.item.name)
                     }
                     add_icon.setOnClickListener {
-                        if ((order[position] as RecyclerItem.Product).order.item.checkRemain()){
-                            callback(position, 2)
-                        }else{
-                            Toast.makeText(mcontext, "This Menu Sold Out", Toast.LENGTH_LONG).show()
-                        }
+
+                        callback(position, 2, (order[position] as RecyclerItem.Product).order.item.name)
 
                     }
                 }

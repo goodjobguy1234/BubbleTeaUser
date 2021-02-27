@@ -40,16 +40,33 @@
         android:text="Queue Lists" />
 
     </androidx.appcompat.widget.Toolbar>
-
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remaining"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="300dp"
-        android:layout_marginVertical="20dp"
-        ></TextView>
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remaining"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="300dp"
+            android:layout_marginVertical="20dp"
+            />
+
+        <TextView
+            android:id="@+id/tvremain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="20dp"
+            android:text="0"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/queue_recycleview"
         android:layout_width="match_parent"

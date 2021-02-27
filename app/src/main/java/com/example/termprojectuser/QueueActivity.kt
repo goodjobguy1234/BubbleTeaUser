@@ -1,50 +1,60 @@
 package com.example.termprojectuser
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.termprojectuser.Adapter.QueueAdapter
+import com.example.termprojectuser.Entity.Queue
+import com.example.termprojectuser.FirebaseHelper.FirebaseQueueHelper
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 
-class QueueActivity : AppCompatActivity() {
-    lateinit var queueList:ArrayList<Queue>
+class QueueActivity : BaseActivity() {
+    lateinit var queueList: FirebaseRecyclerOptions<Queue>
     lateinit var back_btn: ImageButton
     lateinit var queue_recycler: RecyclerView
+    lateinit var tvRemain: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_queue)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        queueList = Queue.createList()
+        queueList = FirebaseQueueHelper.getOption()
         init()
         queue_recycler.apply {
             layoutManager = LinearLayoutManager(this@QueueActivity)
-            adapter = QueueAdapter(queueList)
+            adapter = QueueAdapter(queueList){
+                tvRemain.text = it.toString()
+            }
         }
     }
 
     override fun onStart() {
         super.onStart()
         setUpLayout()
+        (queue_recycler.adapter as FirebaseRecyclerAdapter<*, *>).startListening()
     }
-    fun setUpLayout(){
-        window.decorView.apply {
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        }
-    }
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        setUpLayout()
+
+
+    override fun getLayoutResourceId(): Int {
+        return R.layout.activity_queue
     }
 
     fun init(){
         queue_recycler = findViewById(R.id.queue_recycleview)
         back_btn = findViewById(R.id.back_btn)
+        tvRemain = findViewById(R.id.tvremain)
     }
 
     fun onClickBack(view:View){
         finish()
     }
+
+    override fun onStop() {
+        super.onStop()
+        (queue_recycler.adapter as FirebaseRecyclerAdapter<*, *>).stopListening()
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.termprojectuser
+package com.example.termprojectuser.Entity
 
 
 import android.os.Parcelable
