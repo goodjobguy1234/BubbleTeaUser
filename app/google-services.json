@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "783050573259",
+    "firebase_url": "https://bubbletea-94b66-default-rtdb.firebaseio.com",
+    "project_id": "bubbletea-94b66",
+    "storage_bucket": "bubbletea-94b66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783050573259:android:34263199126448490de24e",
+        "android_client_info": {
+          "package_name": "com.example.termprojectuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "783050573259-2tcgubq6nvu3h9nd7ad0mf5l2fdl1pps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc1_qRvGM1dibhYhYTdmpq_lJ7ACtGqOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "783050573259-2tcgubq6nvu3h9nd7ad0mf5l2fdl1pps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
