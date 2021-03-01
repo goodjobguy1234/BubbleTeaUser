@@ -294,6 +294,7 @@ class MainActivity : BaseActivity() {
                 FirebaseQueueIDHelper.setQueue("A100", currentDate)
                 FirebaseQueueHelper.resetValue()
                 FirebaseSalesHelper.resetSalesQuantity()
+                FirebaseRewardHelper.resetRewardSalesQuantity()
             }
             queue_txt.text = queueid
         }

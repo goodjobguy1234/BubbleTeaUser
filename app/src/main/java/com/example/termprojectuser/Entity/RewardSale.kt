@@ -1,6 +1,6 @@
 package com.example.termprojectuser.Entity
 
-data class Sale(
+data class RewardSale(
         val imageUrl: String = "",
         val name: String = "Unknown",
         var price: Int = -1,

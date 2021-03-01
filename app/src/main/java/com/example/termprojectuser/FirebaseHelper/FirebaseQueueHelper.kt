@@ -42,8 +42,10 @@ object FirebaseQueueHelper {
 //        }
         FirebaseQueueIDHelper.updateCurrentQueue(null)
         FirebaseSalesHelper.updateValue(orderlist)
+        FirebaseRewardHelper.updateValue(orderlist)
 
     }
+    
     fun resetValue(){
         queuery.ref.setValue(null)
     }
