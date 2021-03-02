@@ -16,43 +16,42 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 class RewardActivity : BaseActivity() {
-    lateinit var phone_txt: TextView
-    lateinit var point_txt: TextView
-    lateinit var reward_recycler: RecyclerView
-    lateinit var rewardMenu: FirebaseRecyclerOptions<Menu>
-    lateinit var rewardOrder: ArrayList<Order>
-    lateinit var user: User
+    private lateinit var phone_txt: TextView
+    private lateinit var point_txt: TextView
+    private lateinit var reward_recycler: RecyclerView
+    private lateinit var rewardMenu: FirebaseRecyclerOptions<Menu>
+    private lateinit var rewardOrder: ArrayList<Order>
+    private lateinit var user: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         init()
+
         rewardOrder = ArrayList()
         user = intent.getParcelableExtra<User>("user")!!
         rewardMenu = FIrebaseMenuHelper.getOption()
         phone_txt.text = user.phoneid
         point_txt.text = user.point.toString()
+
         reward_recycler.apply {
             layoutManager = GridLayoutManager(this@RewardActivity, 2)
             adapter = RewardAdapter(rewardMenu){ item ->
-//                if(item.checkRemain()){
-//                    showDialog(item)
-//                }else{
-//                    Toast.makeText(this@RewardActivity, "This menu is unavaliable", Toast.LENGTH_LONG).show()
-//                }
                 showDialog(item)
-
             }
         }
     }
 
+//    setup ui
+    override fun getLayoutResourceId() = R.layout.activity_reward
 
-    override fun getLayoutResourceId(): Int {
-        return R.layout.activity_reward
-    }
-
+    /*
+    * when click back button at the top left
+    * it will return reward orders and user information back to
+    * main page for push into firebase
+    * */
     fun onClickBack(view: View) {
-
         val intent = intent.apply {
             putExtra("item", rewardOrder)
             putExtra("return_user", user)
@@ -60,16 +59,22 @@ class RewardActivity : BaseActivity() {
         setResult(RESULT_OK, intent)
         finish()
     }
-    fun init(){
+
+//    map ui with variable
+    private fun init(){
         point_txt = findViewById(R.id.point_txt)
         phone_txt = findViewById(R.id.id_txt)
         reward_recycler = findViewById(R.id.redeem_recycler)
     }
 
-    fun showDialog(item: Menu){
+    /*
+    * create dialog and setup behavior then show it after users click item from reward list
+    * */
+    private fun showDialog(item: Menu){
         val dialog = createNormalDialog("Do you want to buy ${item.name}?")
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+
                 setOnClickListener {
                     if (user.checkPoint(item)){
                         user.subtractPoint(item.point)
@@ -77,22 +82,19 @@ class RewardActivity : BaseActivity() {
                         dialog.dismiss()
                         showConfirmDialog("Order Confirmed")
                         addRewardOrder(item)
-//                        FIrebaseMenuHelper.updateRemain(item.name, SUBTRACT)
                     }else{
                         dialog.dismiss()
                         showConfirmDialog("Not enough Point")
                     }
-
                     }
+
                 }
             }
             dialog.show()
         }
 
-
-    fun addRewardOrder(item: Menu){
-        rewardOrder.add(Order(item, 1, true))
-    }
+//    add reward order when click reward list item
+    private fun addRewardOrder(item: Menu) = rewardOrder.add(Order(item, 1, true))
 
     override fun onStart() {
         super.onStart()

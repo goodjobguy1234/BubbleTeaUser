@@ -9,6 +9,8 @@ import com.google.firebase.database.ValueEventListener
 object FirebaseUserHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("user")
+
+    /*get users data from the phone number*/
     fun getUser(phoneId: String, callback: (User?) -> Unit){
         queuery.orderByChild("phoneid").equalTo(phoneId).limitToFirst(1).
         addListenerForSingleValueEvent(object : ValueEventListener{
@@ -28,6 +30,7 @@ object FirebaseUserHelper {
         })
     }
 
+    /*update user's point*/
     fun updateUser(phoneid: String, point:Int, currentUser: User){
         val updatePoint = currentUser.point + point
         val updatedUser = User(currentUser.phoneid, updatePoint)

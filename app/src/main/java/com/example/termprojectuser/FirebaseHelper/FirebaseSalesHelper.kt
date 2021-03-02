@@ -10,6 +10,8 @@ import com.google.firebase.database.ValueEventListener
 object FirebaseSalesHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("sale")
+
+    /*get current quantity of sales data of that name item*/
     fun getCurrentQuantity(name:String, callback: (Int) -> Unit){
         queuery.addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -23,10 +25,8 @@ object FirebaseSalesHelper {
 
             })
     }
-    /*
-    * it update some value
-    * used setvalue to fix!!
-    * */
+
+    /*update sales quantity in the list of order*/
     fun updateValue(orderlist: ArrayList<Order>){
         orderlist.forEach {orderitem ->
             if (!orderitem.reward){
@@ -41,13 +41,11 @@ object FirebaseSalesHelper {
                     )
                 }
 
-//                queuery.child(orderitem.item.name).updateChildren(mapOf(
-//                    "quantity" to (orderitem.quantity + currentQuantity)
-//                ))
             }
         }
     }
 
+    /*reset sales quantity of all item in firebase*/
     fun resetSalesQuantity(){
         queuery.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -64,6 +62,7 @@ object FirebaseSalesHelper {
         })
     }
 
+    /*use to write value in firebase*/
     fun writeValue(item: Sale, quantity: Int){
         queuery.child(item.name).setValue(
                 Sale(

@@ -12,6 +12,7 @@ object FirebaseQueueHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("queue")
 
+//    return snapshot of queue list data in firebase
     fun getOption(): FirebaseRecyclerOptions<Queue> {
         val options = FirebaseRecyclerOptions.Builder<Queue>()
                 .setQuery(queuery, Queue::class.java)
@@ -19,6 +20,7 @@ object FirebaseQueueHelper {
         return options
     }
 
+//    write new queue list and update queue id as well as update sales in firebase
     fun writeValue(orderlist: ArrayList<Order>, queue_txt: TextView){
         val postValue = hashMapOf<String, Any>()
         val list = ArrayList<OrderList>()
@@ -37,9 +39,7 @@ object FirebaseQueueHelper {
             }
 
         }
-//        FirebaseQueueIDHelper.updateCurrentQueue() {
-//            queue_txt.text = it
-//        }
+
         FirebaseQueueIDHelper.updateCurrentQueue(null)
         FirebaseSalesHelper.updateValue(orderlist)
         FirebaseRewardHelper.updateValue(orderlist)

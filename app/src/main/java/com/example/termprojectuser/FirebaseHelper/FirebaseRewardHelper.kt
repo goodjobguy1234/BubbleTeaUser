@@ -11,6 +11,7 @@ object FirebaseRewardHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("reward")
 
+//    use to get current quantity of specific reward sales data (get by its name)
     fun getCurrentQuantity(name:String, callback: (Int) -> Unit){
         queuery.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -25,6 +26,7 @@ object FirebaseRewardHelper {
         })
     }
 
+    //   update quantity of reward sales data in firebase
     fun updateValue(orderlist: ArrayList<Order>){
         orderlist.forEach {orderitem ->
             if (orderitem.reward){
@@ -42,6 +44,7 @@ object FirebaseRewardHelper {
         }
     }
 
+    //   reset quantity of reward sales data in firebase
     fun resetRewardSalesQuantity(){
         queuery.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -58,6 +61,7 @@ object FirebaseRewardHelper {
         })
     }
 
+//    use to write value in reward sales data
     fun writeValue(item: RewardSale, quantity: Int){
         queuery.child("Reward ${item.name}").setValue(
                 RewardSale(

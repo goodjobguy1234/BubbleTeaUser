@@ -43,6 +43,7 @@ class MainActivity : BaseActivity() {
     lateinit var sectionList: ArrayList<RecyclerItem>
     private lateinit var order_recycleView: RecyclerView
     private lateinit var order: ArrayList<Order>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,6 +55,9 @@ class MainActivity : BaseActivity() {
         val menuLayout = GridLayoutManager(this, 2)
         val orderLayout = LinearLayoutManager(this)
 
+        /* setup menu list to display. also, set up action when users click add button
+        it will add to order and display in order summary section
+        * */
         menu_recycleView.apply {
             layoutManager = menuLayout
 
@@ -72,11 +76,13 @@ class MainActivity : BaseActivity() {
                         }
                         order_recycleView.scrollToPosition(position)
                         fetchOrderRecycler(order, sectionList)
-                } ?: showToast(context, "Out of Stock")
+                }
 
             }
         }
 
+/* for display order summary ui (when user click add menu from menu list)
+        * */
         order_recycleView.apply {
             layoutManager = orderLayout
             adapter = OrderAdapter(sectionList) { position, type, name ->
@@ -84,37 +90,26 @@ class MainActivity : BaseActivity() {
                 val mposition = order.indexOf((item as RecyclerItem.Product).order)
 
                 when (type) {
-                    1 -> {
-                            order.removeAt(mposition)
-
-                    }
-                    2 -> {
-
-                        order[mposition].addQuantity()
-//                        fetchOrderRecycler(order, sectionList)
-
-                        }
+                    1 -> order.removeAt(mposition)
+                    2 -> order[mposition].addQuantity()
                     3 -> {
-
                             order[mposition].subtractQuantity()
                             if (order[mposition].quantity == 0) {
                                 order.removeAt(mposition)
                             }
-
                     }
                 }
 
                 fetchOrderRecycler(order, sectionList)
-
             }
         }
     }
 
-    override fun getLayoutResourceId(): Int {
-        return R.layout.activity_main
-    }
+    //    setup ui
+    override fun getLayoutResourceId() = R.layout.activity_main
 
-    fun init() {
+//    connect ui view with variable
+    private fun init() {
         progressBar = findViewById(R.id.mprogressbar)
         menu_recycleView = findViewById(R.id.menu_recycleview)
         order_recycleView = findViewById(R.id.order_recycleview)
@@ -123,41 +118,42 @@ class MainActivity : BaseActivity() {
         redeem_btn = findViewById(R.id.redeem_btn)
         total_txt = findViewById(R.id.total_txt)
         queue_txt = findViewById(R.id.txt_queue)
-
     }
 
+//    when user click view queue button then system will go to queue pages
     fun onQueueBtnClick(view: View) {
-
         val intent = Intent(this, QueueActivity::class.java)
         startActivity(intent)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-
         super.onSaveInstanceState(outState, outPersistentState)
         outState.putParcelableArrayList("orderlist", order)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-
         super.onRestoreInstanceState(savedInstanceState)
         val list = savedInstanceState.getParcelableArrayList<Order>("orderlist")
+
         if (list != null) {
             order = list
             fetchOrderRecycler(order, sectionList)
         }
-
     }
 
+/*  user click confirm the order; system check if the order are empty or not
+*  if yes will show text "please order something" , if no then will create dialog
+* asking for input phone ID to get point that calculate from buying drink (2 drink per 3 point)
+*point from drink will add to user acc. in case that user input and accept
+* */
     fun onConfirmBtnClick(view: View) {
-        if (order.isEmpty()) {
-            showToast(this,"Please order something" )
-        } else {
-            var dialog = createEditDialog("Input Phone ID to retrive ${calculatePoint(order)} point")
-            // if accept add point, if not don't add point
+        if (order.isEmpty()) showToast(this,"Please order something" )
+
+        else {
+            val dialog = createEditDialog("Input Phone ID to retrive ${calculatePoint(order)} point")
+
             setOnClickEditDialog(dialog,{ it, phoneid, user ->
+//                when user click accept
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
                 FirebaseQueueHelper.writeValue(order, queue_txt)
@@ -169,6 +165,7 @@ class MainActivity : BaseActivity() {
                 order_recycleView.adapter!!.notifyDataSetChanged()
 
             },{
+//                when user click cancel
                 it.dismiss()
                 showConfirmDialog("Order Confirmed")
                 FirebaseQueueHelper.writeValue(order, queue_txt)
@@ -177,11 +174,16 @@ class MainActivity : BaseActivity() {
                 total_txt.text = "Total     0"
                 order_recycleView.adapter!!.notifyDataSetChanged()
             })
-            //push queue and order + update user point if has
         }
     }
+
+    /*  user click Redeem rewards then it will pop dialog asking for input an phone number
+    that registered in database. if it database doesn't have their phone number it will prompt
+    error to tell that there isn't number in database. if there is number, then it will go to reward page
+* */
     fun onRedeemRewardBtnClick(view: View) {
         val dialog = createEditDialog("Input Phone ID")
+
         setOnClickEditDialog(dialog,{ it, phoneId, user ->
             it.dismiss()
             val intent = Intent(this, RewardActivity::class.java)
@@ -193,10 +195,14 @@ class MainActivity : BaseActivity() {
         })
     }
 
+    /*  this function is for get data from reward page back and put in order summary section
+    data from reward page are reward orders and user information (point and phone number)
+ */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //After get reward item
         try {
             super.onActivityResult(requestCode, resultCode, data)
+
             if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
                 val arrayitem = data!!.getParcelableArrayListExtra<Order>("item")
                 val return_user = data.getParcelableExtra<User>("return_user")!!
@@ -214,34 +220,34 @@ class MainActivity : BaseActivity() {
                 order_recycleView.adapter!!.notifyDataSetChanged()
                 FirebaseUserHelper.updateUser(return_user.phoneid, 0, return_user)
             }
+
         } catch (ex: Exception) {
             showToast(this, ex.toString())
         }
-
     }
 
+    /*  setup dialog behavior*/
     private fun setOnClickEditDialog(dialog: AlertDialog,
                                      callbackpos: (AlertDialog, String, User) -> Unit,
-                                     callbackneg: (AlertDialog) -> Unit
-    ) {
+                                     callbackneg: (AlertDialog) -> Unit) {
+
         dialog.setOnShowListener {
             val edit = dialog.findViewById<EditText>(R.id.input_edt)
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
                 setTextColor(Color.parseColor("#81B29A"))
+
                 setOnClickListener {
                     val phoneId = edit!!.text
-                    //do smt
+
                     if (phoneId.isNotBlank() && phoneId.isNotEmpty()) {
+
                         FirebaseUserHelper.getUser(phoneId.toString()){
-                            if (it != null){
-                                callbackpos(dialog, phoneId.toString(), it)
-                            }else{
-                                edit.error = "No User"
-                            }
+                            if (it != null) callbackpos(dialog, phoneId.toString(), it)
+                            else edit.error = "No User"
                         }
-                    }else{
-                        edit.error = "Please input your id"
-                    }
+
+                    } else edit.error = "Please input your id"
                 }
             }
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).apply {
@@ -266,14 +272,18 @@ class MainActivity : BaseActivity() {
         (menu_recycleView.adapter as FirebaseRecyclerAdapter<*, *>).stopListening()
     }
 
-    fun fetchOrderRecycler(order: ArrayList<Order>, sectionlist:ArrayList<RecyclerItem>){
+//    clear order summary section and total text
+    fun fetchOrderRecycler(order: ArrayList<Order>, sectionList:ArrayList<RecyclerItem>){
         sectionList.clear()
         sectionList.addAll(RecyclerItem.transformList(order))
         order_recycleView.adapter?.notifyDataSetChanged()
         total_txt.text = "Total    ${Order.calculateTotal(order)}"
     }
 
-    fun calculatePoint(orderlist: ArrayList<Order>): Int {
+    /*  this function is called when user press confirm and all order in order summary section
+    will be calculated into point
+*/
+    private fun calculatePoint(orderlist: ArrayList<Order>): Int {
         var totalItem = 0
         val nonRewardList = orderlist.filter {
             !it.reward
@@ -285,17 +295,21 @@ class MainActivity : BaseActivity() {
         return (totalItem /2) * 3
     }
 
+    /*  function that used to setup queue in firebase and application
+   */
     fun setQueue(){
         FirebaseQueueIDHelper.getRealtimeCurrentQueue{ queueid, date ->
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
             Log.d("currentDate", currentDate)
             Log.d("date", date)
+
             if (!date.equals(currentDate)){
                 FirebaseQueueIDHelper.setQueue("A100", currentDate)
                 FirebaseQueueHelper.resetValue()
                 FirebaseSalesHelper.resetSalesQuantity()
                 FirebaseRewardHelper.resetRewardSalesQuantity()
             }
+
             queue_txt.text = queueid
         }
     }

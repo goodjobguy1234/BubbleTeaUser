@@ -8,6 +8,8 @@ import com.google.firebase.database.ValueEventListener
 object FirebaseQueueIDHelper {
     private val firebaseInstance = FirebaseDatabase.getInstance()
     private var queuery = firebaseInstance.reference.child("queueID")
+
+    /*get current queue id*/
     fun getCurrentQueue(callback: (String, String) -> Unit){
         queuery.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -22,6 +24,8 @@ object FirebaseQueueIDHelper {
 
         })
     }
+
+    /*update queue id*/
     fun updateCurrentQueue(callback: ((String) -> Unit)?){
         getCurrentQueue {queue, _ ->
             val current = queue
@@ -32,8 +36,9 @@ object FirebaseQueueIDHelper {
             ))
             callback?.invoke(newQueue)
         }
-        // update date
     }
+
+    /*set queue id and date*/
     fun setQueue(queueid:String, date:String){
         queuery.updateChildren(mapOf(
                 "currentq" to queueid,
@@ -41,6 +46,7 @@ object FirebaseQueueIDHelper {
         ))
     }
 
+    /*real time get queue for instant update ui*/
     fun getRealtimeCurrentQueue(callback: (String, String) -> Unit){
         queuery.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {

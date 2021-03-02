@@ -13,16 +13,19 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 class QueueActivity : BaseActivity() {
-    lateinit var queueList: FirebaseRecyclerOptions<Queue>
-    lateinit var back_btn: ImageButton
-    lateinit var queue_recycler: RecyclerView
-    lateinit var tvRemain: TextView
+    private lateinit var queueList: FirebaseRecyclerOptions<Queue>
+    private lateinit var back_btn: ImageButton
+    private lateinit var queue_recycler: RecyclerView
+    private lateinit var tvRemain: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         queueList = FirebaseQueueHelper.getOption()
         init()
+
+        //  display queue list
         queue_recycler.apply {
             layoutManager = LinearLayoutManager(this@QueueActivity)
             adapter = QueueAdapter(queueList){
@@ -37,17 +40,17 @@ class QueueActivity : BaseActivity() {
         (queue_recycler.adapter as FirebaseRecyclerAdapter<*, *>).startListening()
     }
 
+//    set up ui
+    override fun getLayoutResourceId() = R.layout.activity_queue
 
-    override fun getLayoutResourceId(): Int {
-        return R.layout.activity_queue
-    }
-
-    fun init(){
+    //  map variable with ui
+    private fun init(){
         queue_recycler = findViewById(R.id.queue_recycleview)
         back_btn = findViewById(R.id.back_btn)
         tvRemain = findViewById(R.id.tvremain)
     }
 
+    //  when user click back at the top left
     fun onClickBack(view:View){
         finish()
     }
